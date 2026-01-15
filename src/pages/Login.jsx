@@ -18,7 +18,7 @@ function Login() {
 
    
     const navigateRegister = () => {
-        navigate("/register")//{ replace: true }
+        navigate("/register")//{ replace: true } 
     }
 
   const handleSubmit = (e) => {
