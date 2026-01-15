@@ -1,25 +1,21 @@
-import { useNavigate } from 'react-router-dom';
-import * as React from "react";
+import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 import { Box, Button, Typography, Link } from "@mui/material";
-import TextInputField from '../components/TextInputField.jsx';
+import TextInputField from "../components/TextInputField.jsx";
 
 function Login() {
-    const navigate = useNavigate();
-  const [form, setForm] = React.useState({
+  const navigate = useNavigate();
+  const [form, setForm] = useState({
     email: "",
     password: "",
   });
 
   const [loading, setLoading] = React.useState(false);
 
-  const handleChange = (e) => {
+  const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
-  };
 
-   
-    const navigateRegister = () => {
-        navigate("/register")//{ replace: true }
-    }
+  const navigateRegister = () => navigate("/register"); //{ replace: true }
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -61,7 +57,6 @@ function Login() {
         required
       />
 
-
       <TextInputField
         fullWidth
         label="Password"
@@ -84,26 +79,28 @@ function Login() {
       </Button>
 
       <Typography variant="h9" sx={{ mt: 3 }} textAlign="center">
-        Don't have an account? <Link onClick={navigateRegister} 
-        sx={{ 
-            // textDecoration: "underline", 
-            // cursor: "pointer" 
+        Don't have an account?{" "}
+        <Link
+          onClick={navigateRegister}
+          sx={{
+            // textDecoration: "underline",
+            // cursor: "pointer"
             textDecoration: "underline",
             textDecorationColor: "primary.main",
             textUnderlineOffset: "4px",
             cursor: "pointer",
             color: "primary.main",
             "&:hover": {
-            color: "secondary.main",      // hover text color
-            textDecorationColor: "secondary.main", // hover underline color
+              color: "secondary.main", // hover text color
+              textDecorationColor: "secondary.main", // hover underline color
             },
-            }}
-        >Please Register.</Link> 
+          }}
+        >
+          Please Register.
+        </Link>
       </Typography>
-
     </Box>
   );
 }
-
 
 export default Login;
