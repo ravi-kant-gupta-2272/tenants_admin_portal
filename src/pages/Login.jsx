@@ -1,8 +1,10 @@
 import { useNavigate } from "react-router-dom";
+
 import { useState } from "react";
 import { Box, Button, Typography, Link } from "@mui/material";
 import TextInputField from "../components/TextInputField.jsx";
 import { PasswordField } from "../components/PasswordField.jsx";
+
 
 function Login() {
   const navigate = useNavigate();
@@ -13,13 +15,12 @@ function Login() {
 
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
+  const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
-  };
 
-  const navigateRegister = () => {
-    navigate("/register"); //{ replace: true }
-  };
+
+  const navigateRegister = () => navigate("/register"); //{ replace: true }
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -61,7 +62,21 @@ function Login() {
         onChange={handleChange}
         required
       />
+
       <PasswordField />
+
+
+      <TextInputField
+        fullWidth
+        label="Password"
+        name="password"
+        type="password"
+        margin="normal"
+        value={form.password}
+        onChange={handleChange}
+        required
+      />
+
 
       <Button
         type="submit"
