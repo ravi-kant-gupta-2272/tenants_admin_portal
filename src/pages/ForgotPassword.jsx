@@ -3,60 +3,75 @@ import { useState } from "react";
 import { Box, Button, Typography, Link, Alert } from "@mui/material";
 import TextInputField from "../components/TextInputField.jsx";
 import { PasswordField } from "../components/PasswordField.jsx";
-import { RiAdminFill } from "react-icons/ri";
+
 import axios from "axios";
 
-function Login() {
+function ResetPassword() {
   const navigate = useNavigate();
   const [form, setForm] = useState({
     email: "",
     password: "",
+    confirmPassword: "",
   });
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-
-  const navigateRegister = () => {
-    navigate("/register");
-  };
-
-  const navigateForgotPassword = () => {
-    navigate("/forgotpassword");
+  // Navigate to lOGIN page
+  const navigateLogin = () => {
+    navigate("/login");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setSuccess("");
 
-    console.log("Form Data:", form); // This is your form data log
+    // check password and confirm password
+    if (form.password !== form.confirmPassword) {
+      setError("Passwords do not match");
+      setLoading(false);
+      return;
+    }
+
+    //  length must be greater than or equal 6
+    if (form.password.length < 6) {
+      setError("Password must be at least 6 characters long");
+      setLoading(false);
+      return;
+    }
 
     try {
-      console.log("Attempting login...");
-
       const response = await axios.post(
-        "http://192.168.50.165:3000/api/user/login",
+        "http://192.168.50.165:3000/api/user/reset",
         {
           email: form.email,
           password: form.password,
         },
       );
+      console.log(response);
 
-      console.log("Login successful:", response.data);
+      setSuccess("Password reset successful! Redirecting to login...");
 
-      navigate("/dashboard", { replace: true });
+      //navigate to login after 3 seconds
+      setTimeout(() => {
+        navigate("/login");
+      }, 3000);
     } catch (error) {
-      console.error("Login error:", error);
+      console.error("Reset password error:", error);
 
       if (error.response) {
-        setError(error.response.data.message || "Invalid email or password");
+        setError(error.response.data.message || "Failed to reset password.");
       } else if (error.request) {
-        setError("Server not responding. Please check your connection.");
+        setError(
+          "Server not responding. Please check your internet connection.",
+        );
       } else {
-        setError("An error occurred. Please try again.");
+        setError("error occurred. Please try again.");
       }
     } finally {
       setLoading(false);
@@ -76,14 +91,21 @@ function Login() {
         borderRadius: 2,
       }}
     >
-      <RiAdminFill />
       <Typography variant="h5" mb={3} textAlign="center">
-        Admin Login
+        Reset Password
       </Typography>
+
       {/* Error Alert */}
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
           {error}
+        </Alert>
+      )}
+
+      {/* Success Alert */}
+      {success && (
+        <Alert severity="success" sx={{ mb: 2 }}>
+          {success}
         </Alert>
       )}
 
@@ -100,14 +122,24 @@ function Login() {
 
       <PasswordField
         fullWidth
-        label="Password"
+        label="Enter New Password"
         name="password"
-        type="password"
         margin="normal"
         value={form.password}
         onChange={handleChange}
         required
       />
+
+      <PasswordField
+        fullWidth
+        label="Confirm New Password"
+        name="confirmPassword"
+        margin="normal"
+        value={form.confirmPassword}
+        onChange={handleChange}
+        required
+      />
+
       <Button
         type="submit"
         fullWidth
@@ -115,12 +147,13 @@ function Login() {
         sx={{ mt: 2 }}
         disabled={loading}
       >
-        {loading ? "Logging in..." : "Login"}
+        {loading ? "Resetting..." : "RESET"}
       </Button>
+
       <Typography variant="body2" sx={{ mt: 3 }} textAlign="center">
-        Don't have an account?{" "}
+        Remember your password?{" "}
         <Link
-          onClick={navigateRegister}
+          onClick={navigateLogin}
           sx={{
             textDecoration: "underline",
             textDecorationColor: "primary.main",
@@ -133,29 +166,11 @@ function Login() {
             },
           }}
         >
-          Please Register.
-        </Link>
-        <br></br>
-        <br></br>
-        <Link
-          onClick={navigateForgotPassword}
-          sx={{
-            textDecoration: "underline",
-            textDecorationColor: "primary.main",
-            textUnderlineOffset: "4px",
-            cursor: "pointer",
-            color: "primary.main",
-            "&:hover": {
-              color: "secondary.main",
-              textDecorationColor: "secondary.main",
-            },
-          }}
-        >
-          Forgot Password.
+          Back to Login
         </Link>
       </Typography>
     </Box>
   );
 }
 
-export default Login;
+export default ResetPassword;

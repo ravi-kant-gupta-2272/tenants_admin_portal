@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PasswordField } from "../components/PasswordField";
+import axios from "axios";
 import {
   Box,
   TextField,
@@ -81,8 +82,16 @@ export default function Register() {
       setLoading(true);
 
       try {
-        // We need to Replace this with the actual API call
-        // const response = await axios.post('/api/register', formData);
+        const response = await axios.post(
+          "http://192.168.50.165:3000/api/user/register",
+          {
+            name: formData.name,
+            email: formData.email,
+            password: formData.password,
+          },
+        );
+        console.log(`--------${response.status}`);
+        console.log(response.data.message);
 
         await new Promise((resolve) => setTimeout(resolve, 2000));
 
@@ -100,10 +109,14 @@ export default function Register() {
           navigate("/login"); // Navigate to login page
         }, 1500);
       } catch (error) {
+        let message = "Registration failed. Please try again.";
+        if (error.status === 400) {
+          message = error.response.data.message;
+        }
         console.error("Registration error:", error);
         setSnackbar({
           open: true,
-          message: "Registration failed. Please try again.",
+          message: `${message}`,
           severity: "error",
         });
         setLoading(false);
@@ -170,6 +183,7 @@ export default function Register() {
             <PasswordField
               label="Password"
               name="password"
+              type="password"
               value={formData.password}
               onChange={handleChange}
               error={Boolean(errors.password)}
@@ -181,6 +195,7 @@ export default function Register() {
             <PasswordField
               label="Confirm Password"
               name="confirmPassword"
+              type="password"
               value={formData.confirmPassword}
               onChange={handleChange}
               error={Boolean(errors.confirmPassword)}

@@ -1,6 +1,4 @@
-import { useState } from "react";
 import { TextField, IconButton, InputAdornment } from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 export function PasswordField({
   label = "Password",
@@ -16,11 +14,11 @@ export function PasswordField({
   margin = "normal",
   ...otherProps
 }) {
-  const [showPassword, setShowPassword] = useState(false);
+  //const [showPassword, setShowPassword] = useState(false);
 
-  const handleTogglePassword = () => {
-    setShowPassword(!showPassword);
-  };
+  // const handleTogglePassword = () => {
+  //   setShowPassword(!showPassword);
+  // };
 
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
@@ -28,10 +26,11 @@ export function PasswordField({
 
   return (
     <TextField
+      type="password"
       fullWidth={fullWidth}
       label={label}
       name={name}
-      type={showPassword ? "text" : "password"}
+      //type={showPassword ? "text" : "password"}
       value={value}
       onChange={onChange}
       error={error}
@@ -44,14 +43,12 @@ export function PasswordField({
         endAdornment: (
           <InputAdornment position="end">
             <IconButton
-              onClick={handleTogglePassword}
+              // onClick={handleTogglePassword}
               onMouseDown={handleMouseDownPassword}
               edge="end"
               disabled={disabled}
               aria-label="toggle password visibility"
-            >
-              {showPassword ? <VisibilityOff /> : <Visibility />}
-            </IconButton>
+            ></IconButton>
           </InputAdornment>
         ),
       }}
