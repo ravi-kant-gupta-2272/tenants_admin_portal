@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
+
 import { useState } from "react";
 import { Box, Button, Typography, Link, Alert } from "@mui/material";
 import TextInputField from "../components/TextInputField.jsx";
-import { PasswordField } from "../components/PasswordField.jsx";
 import { RiAdminFill } from "react-icons/ri";
 import axios from "axios";
 
@@ -15,13 +15,10 @@ function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
+  const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
-  };
 
-  const navigateRegister = () => {
-    navigate("/register");
-  };
+  const navigateRegister = () => navigate("/register"); //{ replace: true }
 
   const navigateForgotPassword = () => {
     navigate("/forgotpassword");
@@ -98,7 +95,7 @@ function Login() {
         required
       />
 
-      <PasswordField
+      <TextInputField
         fullWidth
         label="Password"
         name="password"
@@ -108,6 +105,7 @@ function Login() {
         onChange={handleChange}
         required
       />
+
       <Button
         type="submit"
         fullWidth
