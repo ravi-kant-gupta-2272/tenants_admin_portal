@@ -82,20 +82,13 @@ export default function Register() {
       setLoading(true);
 
       try {
-        const response = await axios.post(
-          "http://192.168.50.165:3000/api/user/register",
-          {
-            name: formData.name,
-            email: formData.email,
-            password: formData.password,
-          },
-        );
-        console.log(`--------${response.status}`);
-        console.log(response.data.message);
+        await axios.post("http://192.168.50.165:3000/api/user/register", {
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        });
 
         await new Promise((resolve) => setTimeout(resolve, 2000));
-
-        console.log("Registration successful:", formData);
 
         // Show success message
         setSnackbar({
@@ -113,7 +106,7 @@ export default function Register() {
         if (error.status === 400) {
           message = error.response.data.message;
         }
-        console.error("Registration error:", error);
+
         setSnackbar({
           open: true,
           message: `${message}`,

@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-
 import { useState } from "react";
 import { Box, Button, Typography, Link, Alert } from "@mui/material";
 import TextInputField from "../components/TextInputField.jsx";
@@ -18,7 +17,7 @@ function Login() {
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  const navigateRegister = () => navigate("/register"); //{ replace: true }
+  const navigateRegister = () => navigate("/register");
 
   const navigateForgotPassword = () => {
     navigate("/forgotpassword");
@@ -29,25 +28,14 @@ function Login() {
     setLoading(true);
     setError("");
 
-    console.log("Form Data:", form); // This is your form data log
-
     try {
-      console.log("Attempting login...");
-
-      const response = await axios.post(
-        "http://192.168.50.165:3000/api/user/login",
-        {
-          email: form.email,
-          password: form.password,
-        },
-      );
-
-      console.log("Login successful:", response.data);
+      await axios.post("http://192.168.50.165:3000/api/user/login", {
+        email: form.email,
+        password: form.password,
+      });
 
       navigate("/dashboard", { replace: true });
     } catch (error) {
-      console.error("Login error:", error);
-
       if (error.response) {
         setError(error.response.data.message || "Invalid email or password");
       } else if (error.request) {

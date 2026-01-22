@@ -46,14 +46,10 @@ function ResetPassword() {
     }
 
     try {
-      const response = await axios.post(
-        "http://192.168.50.165:3000/api/user/reset",
-        {
-          email: form.email,
-          password: form.password,
-        },
-      );
-      console.log(response);
+      await axios.post("http://192.168.50.165:3000/api/user/reset", {
+        email: form.email,
+        password: form.password,
+      });
 
       setSuccess("Password reset successful! Redirecting to login...");
 
@@ -62,8 +58,6 @@ function ResetPassword() {
         navigate("/login");
       }, 3000);
     } catch (error) {
-      console.error("Reset password error:", error);
-
       if (error.response) {
         setError(error.response.data.message || "Failed to reset password.");
       } else if (error.request) {
