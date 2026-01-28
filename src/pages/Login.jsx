@@ -6,6 +6,8 @@ import { RiAdminFill } from "react-icons/ri";
 import axios from "axios";
 import { useFormik } from "formik";
 import { loginSchema } from "../schemas/LoginValidationSchema.jsx";
+import { BASE_URL, ENDPOINTS } from "../api/apiConfig.js";
+import CustomSnackbar from "../components/CustomSnackbar.jsx";
 
 const initialValues = {
   email: "",
@@ -15,22 +17,38 @@ const initialValues = {
 function Login() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [apiError, setApiError] = useState("");
+  const [open, setOpen] = useState(false);
 
   const { values, handleBlur, handleChange, errors, handleSubmit, touched } =
     useFormik({
       initialValues: initialValues,
       validationSchema: loginSchema,
-      onSubmit: (values, action) => {
-        console.log(values.email, values.password);
-
-        setLoading(true);
-
-        action.resetForm();
-      },
+      onSubmit: () => handleLoginFunction(),
     });
 
-  const navigateRegister = () => navigate("/register");
+  async function handleLoginFunction(values, action) {
+    console.log("handleLoginFunction clicked");
 
+    setLoading(true);
+    try {
+      console.log(`${BASE_URL}${ENDPOINTS.LOGIN}`);
+      const response = await axios.post(`${BASE_URL}${ENDPOINTS.LOGIN}`, {
+        email: values.email,
+        password: values.password,
+      });
+      console.log("response ", response);
+      navigate("/dashboard");
+      action.resetForm();
+    } catch (error) {
+      setLoading(false);
+      if (error.response?.status === 401) {
+        setApiError(error.response.data.message);
+        setOpen(true);
+      }
+    }
+  }
+  const navigateRegister = () => navigate("/register");
   const navigateForgotPassword = () => {
     navigate("/forgotpassword");
   };
@@ -53,7 +71,6 @@ function Login() {
       <Typography variant="h5" mb={3} textAlign="center">
         Admin Login
       </Typography>
-
       <Box>
         <label htmlFor="email"></label>
         <TextInputField
@@ -72,13 +89,12 @@ function Login() {
           <Typography
             color="error"
             variant="caption"
-            sx={{ mt: 0.5, display: "block" }}
+            sx={{ mt: 0.5, display: "block", textAlign: "left" }}
           >
             {errors.email}
           </Typography>
         ) : null}
       </Box>
-
       <Box>
         <label htmlFor="password"></label>
         <TextInputField
@@ -97,13 +113,12 @@ function Login() {
           <Typography
             color="error"
             variant="caption"
-            sx={{ mt: 0.5, display: "block" }}
+            sx={{ mt: 0.5, display: "block", textAlign: "left" }}
           >
             {errors.password}
           </Typography>
         ) : null}
       </Box>
-
       <Button
         type="submit"
         fullWidth
@@ -113,7 +128,6 @@ function Login() {
       >
         {loading ? "Logging in..." : "Login"}
       </Button>
-
       <Typography variant="body2" sx={{ mt: 3 }} textAlign="center">
         Don't have an account?{" "}
         <Link
@@ -151,6 +165,7 @@ function Login() {
           Forgot Password.
         </Link>
       </Typography>
+      <CustomSnackbar message={apiError} open={open} setOpen={setOpen} />;
     </Box>
   );
 }

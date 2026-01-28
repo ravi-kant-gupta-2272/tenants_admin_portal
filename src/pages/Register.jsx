@@ -2,6 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PasswordField } from "../components/PasswordField";
 import axios from "axios";
+import { useFormik } from "formik";
+import { registerSchema } from "../schemas/RegisterValidationSchema";
+import TextInputField from "../components/TextInputField";
 import {
   Box,
   TextField,
@@ -12,18 +15,31 @@ import {
   CircularProgress,
   Alert,
   Snackbar,
+  Grid,
 } from "@mui/material";
 
 export default function Register() {
-  const navigate = useNavigate(); // Initialize navigate hook
-  const [formData, setFormData] = useState({
+  const navigate = useNavigate();
+  const initialValues = {
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
-  });
+  };
 
-  const [errors, setErrors] = useState({});
+  const { values, handleBlur, handleChange, errors, handleSubmit, touched } =
+    useFormik({
+      initialValues,
+      validationSchema: registerSchema,
+      onSubmit: (values, action) => {
+        console.log(values.email, values.password);
+
+        //setLoading(true);
+
+        action.resetForm();
+      },
+    });
+
   const [loading, setLoading] = useState(false);
 
   const [snackbar, setSnackbar] = useState({
@@ -31,93 +47,6 @@ export default function Register() {
     message: "",
     severity: "success",
   });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: "",
-      }));
-    }
-  };
-
-  const validate = () => {
-    const newErrors = {};
-
-    if (!formData.name.trim()) {
-      newErrors.name = "Name is required";
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email is invalid";
-    }
-
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
-    }
-
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = "Please confirm your password";
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
-    }
-
-    return newErrors;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const newErrors = validate();
-
-    if (Object.keys(newErrors).length === 0) {
-      setLoading(true);
-
-      try {
-        await axios.post("http://192.168.50.165:3000/api/user/register", {
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-        });
-
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-
-        // Show success message
-        setSnackbar({
-          open: true,
-          message: "Registration successful! Redirecting to login...",
-          severity: "success",
-        });
-
-        // Redirect to login page after 1.5 seconds
-        setTimeout(() => {
-          navigate("/login"); // Navigate to login page
-        }, 1500);
-      } catch (error) {
-        let message = "Registration failed. Please try again.";
-        if (error.status === 400) {
-          message = error.response.data.message;
-        }
-
-        setSnackbar({
-          open: true,
-          message: `${message}`,
-          severity: "error",
-        });
-        setLoading(false);
-      }
-    } else {
-      setErrors(newErrors);
-    }
-  };
 
   const handleCloseSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
@@ -144,59 +73,108 @@ export default function Register() {
             Register
           </Typography>
 
-          <Box component="form" onSubmit={handleSubmit} noValidate>
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            noValidate
+            sx={{ textAlign: "left" }}
+          >
+            {/* <Box sx={{ mt: 2 }}> */}
             <TextField
               fullWidth
               label="Name"
               name="name"
-              value={formData.name}
-              onChange={handleChange}
-              error={Boolean(errors.name)}
-              helperText={errors.name}
+              variant="outlined"
+              value={values.name}
               margin="normal"
-              required
               disabled={loading}
-              autoComplete="name"
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={touched.name && Boolean(errors.name)}
+              sx={{ mb: 0 }}
             />
+            {touched.name && errors.name ? (
+              <Typography
+                color="error"
+                variant="caption"
+                sx={{ mt: 0.5, mb: 2, textAlign: "left" }}
+              >
+                {errors.name}
+              </Typography>
+            ) : null}
+            {/* </Box> */}
             <TextField
               fullWidth
               label="Email"
               name="email"
               type="email"
-              value={formData.email}
+              variant="outlined"
+              value={values.email}
               onChange={handleChange}
-              error={Boolean(errors.email)}
-              helperText={errors.email}
+              onBlur={handleBlur}
               margin="normal"
-              required
               disabled={loading}
-              autoComplete="email"
+              error={touched.email && Boolean(errors.email)}
+              sx={{ mb: 0 }}
             />
+            {touched.email && errors.email ? (
+              <Typography
+                color="error"
+                variant="caption"
+                sx={{ mt: 0.5, mb: 2, textAlign: "left" }}
+              >
+                {errors.email}
+              </Typography>
+            ) : null}
 
-            <PasswordField
+            {/* <Box sx={{ mt: 2 }}> */}
+            {/* <label htmlFor="Confirm Password"></label> */}
+            <TextInputField
+              fullWidth
               label="Password"
               name="password"
               type="password"
-              value={formData.password}
+              margin="normal"
+              value={values.password}
               onChange={handleChange}
-              error={Boolean(errors.password)}
-              helperText={errors.password}
-              required
-              disabled={loading}
-              autoComplete="new-password"
+              onBlur={handleBlur}
+              error={touched.password && Boolean(errors.password)}
             />
-            <PasswordField
+            {/* </Box> */}
+            {touched.password && errors.password ? (
+              <Typography
+                color="error"
+                variant="caption"
+                sx={{ mt: 0.5, mb: 2, textAlign: "left" }}
+              >
+                {errors.password}
+              </Typography>
+            ) : null}
+
+            {/* <Box sx={{ mt: 2 }}> */}
+            {/* <label htmlFor="confirmPassword"></label> */}
+            <TextInputField
+              fullWidth
               label="Confirm Password"
               name="confirmPassword"
               type="password"
-              value={formData.confirmPassword}
+              margin="normal"
+              value={values.confirmPassword}
               onChange={handleChange}
-              error={Boolean(errors.confirmPassword)}
-              helperText={errors.confirmPassword}
-              required
-              disabled={loading}
-              autoComplete="new-password"
+              onBlur={handleBlur}
+              error={touched.confirmPassword && Boolean(errors.confirmPassword)}
             />
+            {/* </Box> */}
+            {touched.confirmPassword && errors.confirmPassword ? (
+              <Typography
+                color="error"
+                variant="caption"
+                sx={{ mt: 0.5, mb: 2, textAlign: "left" }}
+              >
+                {errors.confirmPassword}
+              </Typography>
+            ) : null}
+
             <Button
               fullWidth
               type="submit"

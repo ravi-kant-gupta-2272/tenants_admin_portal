@@ -2,7 +2,6 @@ import { TextField } from "@mui/material";
 
 function TextInputField({
   fullWidth = true,
-
   label,
   name,
   type,

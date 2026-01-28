@@ -3,7 +3,6 @@ import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import "./App.css";
 import Dashboard from "./components/Dashboard.jsx";
-
 import ForgotPassword from "./pages/ForgotPassword.jsx";
 
 function App() {

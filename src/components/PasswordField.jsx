@@ -12,6 +12,7 @@ export function PasswordField({
   autoComplete = "current-password",
   fullWidth = true,
   margin = "normal",
+  variant = "outlined",
   ...otherProps
 }) {
   //const [showPassword, setShowPassword] = useState(false);
@@ -28,6 +29,7 @@ export function PasswordField({
     <TextField
       type="password"
       fullWidth={fullWidth}
+      variant={variant}
       label={label}
       name={name}
       //type={showPassword ? "text" : "password"}
@@ -40,7 +42,7 @@ export function PasswordField({
       disabled={disabled}
       autoComplete={autoComplete}
       slotProps={{
-        endAdornment: (
+        input: (
           <InputAdornment position="end">
             <IconButton
               // onClick={handleTogglePassword}
