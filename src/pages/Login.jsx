@@ -4,18 +4,30 @@ import { Box, Button, Typography, Link, Alert } from "@mui/material";
 import TextInputField from "../components/TextInputField.jsx";
 import { RiAdminFill } from "react-icons/ri";
 import axios from "axios";
+import { useFormik } from "formik";
+import { loginSchema } from "../schemas/LoginValidationSchema.jsx";
+
+const initialValues = {
+  email: "",
+  password: "",
+};
 
 function Login() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-  });
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const { values, handleBlur, handleChange, errors, handleSubmit, touched } =
+    useFormik({
+      initialValues: initialValues,
+      validationSchema: loginSchema,
+      onSubmit: (values, action) => {
+        console.log(values.email, values.password);
+
+        setLoading(true);
+
+        action.resetForm();
+      },
+    });
 
   const navigateRegister = () => navigate("/register");
 
@@ -23,35 +35,11 @@ function Login() {
     navigate("/forgotpassword");
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-
-    try {
-      await axios.post("http://192.168.50.165:3000/api/user/login", {
-        email: form.email,
-        password: form.password,
-      });
-
-      navigate("/dashboard", { replace: true });
-    } catch (error) {
-      if (error.response) {
-        setError(error.response.data.message || "Invalid email or password");
-      } else if (error.request) {
-        setError("Server not responding. Please check your connection.");
-      } else {
-        setError("An error occurred. Please try again.");
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <Box
       component="form"
       onSubmit={handleSubmit}
+      noValidate // <-- html5 ke default  validation behaviour(email) ko disable kar deta hai ye
       sx={{
         width: 360,
         mx: "auto",
@@ -65,34 +53,56 @@ function Login() {
       <Typography variant="h5" mb={3} textAlign="center">
         Admin Login
       </Typography>
-      {/* Error Alert */}
-      {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
-        </Alert>
-      )}
 
-      <TextInputField
-        fullWidth
-        label="Email"
-        name="email"
-        type="email"
-        margin="normal"
-        value={form.email}
-        onChange={handleChange}
-        required
-      />
+      <Box>
+        <label htmlFor="email"></label>
+        <TextInputField
+          fullWidth
+          label="Email"
+          name="email"
+          type="email"
+          margin="normal"
+          value={values.email}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          error={touched.email && Boolean(errors.email)}
+        />
 
-      <TextInputField
-        fullWidth
-        label="Password"
-        name="password"
-        type="password"
-        margin="normal"
-        value={form.password}
-        onChange={handleChange}
-        required
-      />
+        {touched.email && errors.email ? (
+          <Typography
+            color="error"
+            variant="caption"
+            sx={{ mt: 0.5, display: "block" }}
+          >
+            {errors.email}
+          </Typography>
+        ) : null}
+      </Box>
+
+      <Box>
+        <label htmlFor="password"></label>
+        <TextInputField
+          fullWidth
+          label="Password"
+          name="password"
+          type="password"
+          margin="normal"
+          value={values.password}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          error={touched.password && Boolean(errors.password)}
+        />
+
+        {touched.password && errors.password ? (
+          <Typography
+            color="error"
+            variant="caption"
+            sx={{ mt: 0.5, display: "block" }}
+          >
+            {errors.password}
+          </Typography>
+        ) : null}
+      </Box>
 
       <Button
         type="submit"
@@ -103,6 +113,7 @@ function Login() {
       >
         {loading ? "Logging in..." : "Login"}
       </Button>
+
       <Typography variant="body2" sx={{ mt: 3 }} textAlign="center">
         Don't have an account?{" "}
         <Link
@@ -121,8 +132,8 @@ function Login() {
         >
           Please Register.
         </Link>
-        <br></br>
-        <br></br>
+        <br />
+        <br />
         <Link
           onClick={navigateForgotPassword}
           sx={{
