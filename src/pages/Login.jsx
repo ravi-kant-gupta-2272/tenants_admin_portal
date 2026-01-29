@@ -22,32 +22,28 @@ function Login() {
 
   const { values, handleBlur, handleChange, errors, handleSubmit, touched } =
     useFormik({
-      initialValues: initialValues,
+      initialValues,
       validationSchema: loginSchema,
-      onSubmit: () => handleLoginFunction(),
+      onSubmit: handleLoginFunction,
     });
 
   async function handleLoginFunction(values, action) {
-    console.log("handleLoginFunction clicked");
-
     setLoading(true);
+
     try {
-      console.log(`${BASE_URL}${ENDPOINTS.LOGIN}`);
-      const response = await axios.post(`${BASE_URL}${ENDPOINTS.LOGIN}`, {
-        email: values.email,
-        password: values.password,
-      });
-      console.log("response ", response);
-      navigate("/dashboard");
+      await axios.post(`${BASE_URL}${ENDPOINTS.LOGIN}`, values);
+
+      setApiError("");
+      navigate("/dashboard", { replace: true });
       action.resetForm();
     } catch (error) {
+      setApiError(error.response?.data?.message || "Login failed");
+      setOpen(true);
+    } finally {
       setLoading(false);
-      if (error.response?.status === 401) {
-        setApiError(error.response.data.message);
-        setOpen(true);
-      }
     }
   }
+
   const navigateRegister = () => navigate("/register");
   const navigateForgotPassword = () => {
     navigate("/forgotpassword");
@@ -165,7 +161,7 @@ function Login() {
           Forgot Password.
         </Link>
       </Typography>
-      <CustomSnackbar message={apiError} open={open} setOpen={setOpen} />;
+      <CustomSnackbar message={apiError} open={open} setOpen={setOpen} />
     </Box>
   );
 }
