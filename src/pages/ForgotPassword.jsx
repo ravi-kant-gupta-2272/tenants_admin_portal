@@ -52,7 +52,6 @@ function ResetPassword() {
     }, 2000);
 
   } catch (error) {
-    console.log("error--> ", error.response?.data?.message);
 
     setApiError(error.response?.data?.message || "Reset Password failed");
     setSeverity("error");

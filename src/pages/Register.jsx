@@ -54,8 +54,6 @@ export default function Register() {
     }, 3000);
 
   } catch (error) {
-    console.log(error);
-
     setSeverity("error");
     setApiError(error.response?.data?.message || "Registration failed");
     setOpen(true);
