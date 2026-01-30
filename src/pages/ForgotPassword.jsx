@@ -1,80 +1,69 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Box, Button, Typography, Link, Alert } from "@mui/material";
+import { Box, Button, Typography, Link } from "@mui/material";
 import TextInputField from "../components/TextInputField.jsx";
-import { PasswordField } from "../components/PasswordField.jsx";
-
+import { passwordResetSchema } from "../schemas/PasswordResetValidationSchema.jsx";
+import { useFormik } from "formik";
 import axios from "axios";
-
+import { BASE_URL } from "../api/apiConfig.js";
+import CustomSnackbar from "../components/CustomSnackbar.jsx";
+import { ENDPOINTS } from "../api/apiConfig.js";
+import CircularProgress from '@mui/material/CircularProgress';
 function ResetPassword() {
-  const navigate = useNavigate();
-  const [form, setForm] = useState({
+  
+  const initialValues = {
     email: "",
     password: "",
-    confirmPassword: "",
-  });
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    forgotPassword: ""
   };
-  // Navigate to lOGIN page
+  const navigate = useNavigate();
+  const [apiError,setApiError] = useState("");
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [severity, setSeverity] = useState("error"); 
+
   const navigateLogin = () => {
     navigate("/login");
   };
+  const { values, handleBlur, handleChange, errors, handleSubmit, touched } =
+    useFormik({
+      initialValues,
+      validationSchema: passwordResetSchema,
+      onSubmit: handleResetPasswordFunction
+    });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-    setSuccess("");
+    async function handleResetPasswordFunction(values, action) {
+  setLoading(true);
 
-    // check password and confirm password
-    if (form.password !== form.confirmPassword) {
-      setError("Passwords do not match");
+  try {
+    const resp = await axios.post(
+      `${BASE_URL}${ENDPOINTS.RESET}`,
+      values
+    );
+
+    setApiError("Password Reset Success! Navigating to login page");
+    setSeverity("success");
+    setOpen(true);
+
+    setTimeout(() => {
       setLoading(false);
-      return;
-    }
+      navigate("/login", { replace: true });
+      action.resetForm();
+    }, 2000);
 
-    //  length must be greater than or equal 6
-    if (form.password.length < 6) {
-      setError("Password must be at least 6 characters long");
-      setLoading(false);
-      return;
-    }
+  } catch (error) {
+    console.log("error--> ", error.response?.data?.message);
 
-    try {
-      await axios.post("http://192.168.50.165:3000/api/user/reset", {
-        email: form.email,
-        password: form.password,
-      });
-
-      setSuccess("Password reset successful! Redirecting to login...");
-
-      //navigate to login after 3 seconds
-      setTimeout(() => {
-        navigate("/login");
-      }, 3000);
-    } catch (error) {
-      if (error.response) {
-        setError(error.response.data.message || "Failed to reset password.");
-      } else if (error.request) {
-        setError(
-          "Server not responding. Please check your internet connection.",
-        );
-      } else {
-        setError("error occurred. Please try again.");
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
+    setApiError(error.response?.data?.message || "Reset Password failed");
+    setSeverity("error");
+    setOpen(true);
+    setLoading(false);
+  }
+}
   return (
     <Box
       component="form"
+      noValidate
       onSubmit={handleSubmit}
       sx={{
         width: 360,
@@ -89,50 +78,67 @@ function ResetPassword() {
         Reset Password
       </Typography>
 
-      {/* Error Alert */}
-      {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
-        </Alert>
-      )}
-
-      {/* Success Alert */}
-      {success && (
-        <Alert severity="success" sx={{ mb: 2 }}>
-          {success}
-        </Alert>
-      )}
-
       <TextInputField
         fullWidth
         label="Email"
         name="email"
         type="email"
         margin="normal"
-        value={form.email}
+        value={values.email}
         onChange={handleChange}
-        required
-      />
+        onBlur={handleBlur}
 
-      <PasswordField
+      />
+      {touched.email && errors.email ? (
+        <Typography
+          color="error"
+          variant="caption"
+          sx={{ mt: 0.5, mb: 2, textAlign: "left" }}
+        >
+          {errors.email}
+        </Typography>
+      ) : null}
+
+      <TextInputField
         fullWidth
         label="Enter New Password"
         name="password"
+        type="password"
         margin="normal"
-        value={form.password}
+        value={values.password}
         onChange={handleChange}
-        required
-      />
+        onBlur={handleBlur}
 
-      <PasswordField
+      />
+      {touched.password && errors.password ? (
+        <Typography
+          color="error"
+          variant="caption"
+          sx={{ mt: 0.5, mb: 2, textAlign: "left" }}
+        >
+          {errors.password}
+        </Typography>
+      ) : null}
+
+      <TextInputField
         fullWidth
         label="Confirm New Password"
         name="confirmPassword"
+        type="password"
         margin="normal"
-        value={form.confirmPassword}
         onChange={handleChange}
-        required
+        onBlur={handleBlur}
+        value={values.confirmPassword}
       />
+      {touched.confirmPassword && errors.confirmPassword ? (
+        <Typography
+          color="error"
+          variant="caption"
+          sx={{ mt: 0.5, mb: 2, textAlign: "left" }}
+        >
+          {errors.confirmPassword}
+        </Typography>
+      ) : null}
 
       <Button
         type="submit"
@@ -141,7 +147,11 @@ function ResetPassword() {
         sx={{ mt: 2 }}
         disabled={loading}
       >
-        {loading ? "Resetting..." : "RESET"}
+        {loading ? (
+                 <CircularProgress size={24}  color="secondary"/>
+               ) : (
+                 "RESET"
+               )}
       </Button>
 
       <Typography variant="body2" sx={{ mt: 3 }} textAlign="center">
@@ -163,6 +173,7 @@ function ResetPassword() {
           Back to Login
         </Link>
       </Typography>
+      <CustomSnackbar message={apiError} open={open} setOpen={setOpen} severity={severity}/>
     </Box>
   );
 }

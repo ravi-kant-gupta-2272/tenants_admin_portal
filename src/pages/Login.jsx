@@ -8,6 +8,7 @@ import { useFormik } from "formik";
 import { loginSchema } from "../schemas/LoginValidationSchema.jsx";
 import { BASE_URL, ENDPOINTS } from "../api/apiConfig.js";
 import CustomSnackbar from "../components/CustomSnackbar.jsx";
+import CircularProgress from '@mui/material/CircularProgress';
 
 const initialValues = {
   email: "",
@@ -19,6 +20,7 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState("");
   const [open, setOpen] = useState(false);
+  const [severity, setSeverity] = useState("error"); 
 
   const { values, handleBlur, handleChange, errors, handleSubmit, touched } =
     useFormik({
@@ -27,22 +29,30 @@ function Login() {
       onSubmit: handleLoginFunction,
     });
 
-  async function handleLoginFunction(values, action) {
-    setLoading(true);
+    async function handleLoginFunction(values, action) {
+  setLoading(true);
 
-    try {
-      await axios.post(`${BASE_URL}${ENDPOINTS.LOGIN}`, values);
+  try {
+   
+    await axios.post(`${BASE_URL}${ENDPOINTS.LOGIN}`, values);
 
-      setApiError("");
+    setSeverity("success");
+    setApiError("Login Success. Navigating to dashboard");
+    setOpen(true);
+
+    setTimeout(() => {
+      setLoading(false);
       navigate("/dashboard", { replace: true });
       action.resetForm();
-    } catch (error) {
-      setApiError(error.response?.data?.message || "Login failed");
-      setOpen(true);
-    } finally {
-      setLoading(false);
-    }
+    }, 2000);
+
+  } catch (error) {
+    setSeverity("error");
+    setApiError(error.response?.data?.message || "Login failed");
+    setOpen(true);
+    setLoading(false);
   }
+}
 
   const navigateRegister = () => navigate("/register");
   const navigateForgotPassword = () => {
@@ -53,7 +63,7 @@ function Login() {
     <Box
       component="form"
       onSubmit={handleSubmit}
-      noValidate // <-- html5 ke default  validation behaviour(email) ko disable kar deta hai ye
+      noValidate 
       sx={{
         width: 360,
         mx: "auto",
@@ -122,7 +132,12 @@ function Login() {
         sx={{ mt: 2 }}
         disabled={loading}
       >
-        {loading ? "Logging in..." : "Login"}
+      
+         {loading ? (
+          <CircularProgress size={24}  color="secondary"/>
+        ) : (
+          "Login"
+        )}
       </Button>
       <Typography variant="body2" sx={{ mt: 3 }} textAlign="center">
         Don't have an account?{" "}
@@ -136,7 +151,7 @@ function Login() {
             color: "primary.main",
             "&:hover": {
               color: "secondary.main",
-              textDecorationColor: "secondary.main",
+              textDecorationColor: "secondary.main"
             },
           }}
         >
@@ -161,9 +176,8 @@ function Login() {
           Forgot Password.
         </Link>
       </Typography>
-      <CustomSnackbar message={apiError} open={open} setOpen={setOpen} />
+      <CustomSnackbar message={apiError} open={open} setOpen={setOpen} severity={severity}/>
     </Box>
   );
 }
-
 export default Login;

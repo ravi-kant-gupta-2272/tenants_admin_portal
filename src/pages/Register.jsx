@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { PasswordField } from "../components/PasswordField";
 import axios from "axios";
 import { useFormik } from "formik";
 import { registerSchema } from "../schemas/RegisterValidationSchema";
 import TextInputField from "../components/TextInputField";
+import CustomSnackbar from "../components/CustomSnackbar";
+import { BASE_URL, ENDPOINTS } from "../api/apiConfig.js";
+import CircularProgress from '@mui/material/CircularProgress';
 import {
   Box,
   TextField,
@@ -12,14 +14,16 @@ import {
   Typography,
   Container,
   Paper,
-  CircularProgress,
   Alert,
   Snackbar,
-  Grid,
 } from "@mui/material";
 
 export default function Register() {
+ const [apiError, setApiError] = useState("");
+  const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [severity,setSeverity]=useState("error")
   const initialValues = {
     name: "",
     email: "",
@@ -31,16 +35,34 @@ export default function Register() {
     useFormik({
       initialValues,
       validationSchema: registerSchema,
-      onSubmit: (values, action) => {
-        console.log(values.email, values.password);
-
-        //setLoading(true);
-
-        action.resetForm();
-      },
+       onSubmit:handleRegisterFunction
     });
 
-  const [loading, setLoading] = useState(false);
+  async function handleRegisterFunction(values, action) {
+  setLoading(true);
+
+  try {
+    await axios.post(`${BASE_URL}${ENDPOINTS.REGISTER}`, values);
+
+    setApiError("Registration Successful! Redirecting to login...");
+    setSeverity("success");
+    setOpen(true);
+    setTimeout(() => {
+      setLoading(false);
+      navigate("/login", { replace: true });
+      action.resetForm();
+    }, 3000);
+
+  } catch (error) {
+    console.log(error);
+
+    setSeverity("error");
+    setApiError(error.response?.data?.message || "Registration failed");
+    setOpen(true);
+
+    setLoading(false);
+  }
+}
 
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -51,6 +73,7 @@ export default function Register() {
   const handleCloseSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
   };
+   
 
   return (
     <Container maxWidth="sm">
@@ -79,7 +102,7 @@ export default function Register() {
             noValidate
             sx={{ textAlign: "left" }}
           >
-            {/* <Box sx={{ mt: 2 }}> */}
+           
             <TextField
               fullWidth
               label="Name"
@@ -102,7 +125,7 @@ export default function Register() {
                 {errors.name}
               </Typography>
             ) : null}
-            {/* </Box> */}
+           
             <TextField
               fullWidth
               label="Email"
@@ -127,8 +150,7 @@ export default function Register() {
               </Typography>
             ) : null}
 
-            {/* <Box sx={{ mt: 2 }}> */}
-            {/* <label htmlFor="Confirm Password"></label> */}
+         
             <TextInputField
               fullWidth
               label="Password"
@@ -140,7 +162,7 @@ export default function Register() {
               onBlur={handleBlur}
               error={touched.password && Boolean(errors.password)}
             />
-            {/* </Box> */}
+          
             {touched.password && errors.password ? (
               <Typography
                 color="error"
@@ -151,8 +173,7 @@ export default function Register() {
               </Typography>
             ) : null}
 
-            {/* <Box sx={{ mt: 2 }}> */}
-            {/* <label htmlFor="confirmPassword"></label> */}
+          
             <TextInputField
               fullWidth
               label="Confirm Password"
@@ -164,7 +185,7 @@ export default function Register() {
               onBlur={handleBlur}
               error={touched.confirmPassword && Boolean(errors.confirmPassword)}
             />
-            {/* </Box> */}
+           
             {touched.confirmPassword && errors.confirmPassword ? (
               <Typography
                 color="error"
@@ -183,17 +204,15 @@ export default function Register() {
               disabled={loading}
               sx={{ mt: 3, mb: 2, position: "relative" }}
             >
-              {loading ? (
-                <>
-                  <CircularProgress size={24} sx={{ position: "absolute" }} />
-                  <span style={{ visibility: "hidden" }}>Register</span>
-                </>
-              ) : (
-                "Register"
-              )}
+                 {loading ? (
+          <CircularProgress size={24}  color="secondary"/>
+        ) : (
+          "REGISTER"
+        )}
             </Button>
           </Box>
         </Paper>
+         <CustomSnackbar message={apiError} open={open} setOpen={setOpen} severity={severity} />
       </Box>
 
       <Snackbar
