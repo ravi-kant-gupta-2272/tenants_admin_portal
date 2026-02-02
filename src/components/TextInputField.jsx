@@ -22,7 +22,7 @@ function TextInputField({
       required={required}
       sx={{
         label: { color: "#ffffff" },
-        color: "#ffffff", // this applies to text and label in most cases
+        color: "#ffffff",
         '& .MuiOutlinedInput-root': {
           '& fieldset': { borderColor: "#ffffff" },
           '&:hover fieldset': { borderColor: "#ffffff" },
