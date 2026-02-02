@@ -71,9 +71,10 @@ function ResetPassword() {
         p: 4,
         boxShadow: 1,
         borderRadius: 2,
+        backgroundColor: "#27586fff",
       }}
     >
-      <Typography variant="h5" mb={3} textAlign="center">
+      <Typography variant="h5" mb={3} textAlign="center" color="#ffffff">
         Reset Password
       </Typography>
 
@@ -143,8 +144,9 @@ function ResetPassword() {
         type="submit"
         fullWidth
         variant="contained"
-        sx={{ mt: 2 }}
+        sx={{ mt: 2, backgroundColor: "#8AA624" }}
         disabled={loading}
+        
       >
         {loading ? (
                  <CircularProgress size={24}  color="secondary"/>
@@ -153,7 +155,7 @@ function ResetPassword() {
                )}
       </Button>
 
-      <Typography variant="body2" sx={{ mt: 3 }} textAlign="center">
+      <Typography variant="body2" sx={{ mt: 3, color: "#ffffff" }} textAlign="center">
         Remember your password?{" "}
         <Link
           onClick={navigateLogin}
@@ -162,10 +164,10 @@ function ResetPassword() {
             textDecorationColor: "primary.main",
             textUnderlineOffset: "4px",
             cursor: "pointer",
-            color: "primary.main",
+           color: "#ffffff",
             "&:hover": {
-              color: "secondary.main",
-              textDecorationColor: "secondary.main",
+              color: "#8AA624",
+              textDecorationColor: "secondary.main"
             },
           }}
         >

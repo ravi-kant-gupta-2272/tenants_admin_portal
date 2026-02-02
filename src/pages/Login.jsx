@@ -1,14 +1,18 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Box, Button, Typography, Link, Alert } from "@mui/material";
+import { Box, Button, Typography, Link, Alert, } from "@mui/material";
 import TextInputField from "../components/TextInputField.jsx";
 import { RiAdminFill } from "react-icons/ri";
+import { IoMdPerson } from "react-icons/io";
+// import { BsPersonWorkspace } from "react-icons/bs";
+// import { IoPersonCircleOutline } from "react-icons/io5";
 import axios from "axios";
 import { useFormik } from "formik";
 import { loginSchema } from "../schemas/LoginValidationSchema.jsx";
 import { BASE_URL, ENDPOINTS } from "../api/apiConfig.js";
 import CustomSnackbar from "../components/CustomSnackbar.jsx";
 import CircularProgress from '@mui/material/CircularProgress';
+import { Height, WidthFull } from "@mui/icons-material";
 
 const initialValues = {
   email: "",
@@ -30,30 +34,30 @@ function Login() {
     });
 
     async function handleLoginFunction(values, action) {
-  setLoading(true);
+      setLoading(true);
 
-  try {
-   
-    await axios.post(`${BASE_URL}${ENDPOINTS.LOGIN}`, values);
+      try {
+      
+        await axios.post(`${BASE_URL}${ENDPOINTS.LOGIN}`, values);
 
-    setSeverity("success");
-    setApiError("Login Success. Navigating to dashboard");
-    setOpen(true);
+        setSeverity("success");
+        setApiError("Login Success. Navigating to dashboard");
+        setOpen(true);
 
-    setTimeout(() => {
-      setLoading(false);
-      navigate("/dashboard", { replace: true });
-      action.resetForm();
-    }, 2000);
+        setTimeout(() => {
+          setLoading(false);
+          action.resetForm();
+          localStorage.setItem("authToken", "true");
+          navigate("/dashboard", { replace: true, relative: "path" });
+        }, 2000);
 
-  } catch (error) {
-    setSeverity("error");
-    setApiError(error.response?.data?.message || "Login failed");
-    setOpen(true);
-    setLoading(false);
-  }
-}
-
+      } catch (error) {
+        setSeverity("error");
+        setApiError(error.response?.data?.message || "Login failed");
+        setOpen(true);
+        setLoading(false);
+      }
+    }
   const navigateRegister = () => navigate("/register");
   const navigateForgotPassword = () => {
     navigate("/forgotpassword");
@@ -69,12 +73,16 @@ function Login() {
         mx: "auto",
         mt: 10,
         p: 4,
+        pt: 1,
         boxShadow: 1,
         borderRadius: 2,
+        backgroundColor: "#27586fff",
+        
       }}
     >
-      <RiAdminFill />
-      <Typography variant="h5" mb={3} textAlign="center">
+      {/* <RiAdminFill /> */}
+      <IoMdPerson size={100} style={{ display: "block", margin: "0 auto", color:"#ffffff"}} />
+      <Typography variant="h5" mb={2} textAlign="center" color="#ffffff">
         Admin Login
       </Typography>
       <Box>
@@ -125,11 +133,35 @@ function Login() {
           </Typography>
         ) : null}
       </Box>
+      {/* <br /> */}
+      <Box
+      sx={{ display: "flex", justifyContent: "flex-end", mt: 0 }}
+      >
+        <Link
+          onClick={navigateForgotPassword}
+          sx={{
+            textAlign: "right",
+            textDecoration: "underline",
+            textDecorationColor: "primary.main",
+            textUnderlineOffset: "4px",
+            cursor: "pointer",
+            fontSize: "12px",
+            color: "#ffffff",
+            "&:hover": {
+              color: "#8AA624",
+              textDecorationColor: "secondary.main",
+            },
+          }}
+        >
+          Forgot Password.
+        </Link>
+      </Box>
+      
       <Button
         type="submit"
         fullWidth
         variant="contained"
-        sx={{ mt: 2 }}
+        sx={{ mt: 2 , backgroundColor: "#8AA624"}}
         disabled={loading}
       >
       
@@ -139,7 +171,10 @@ function Login() {
           "Login"
         )}
       </Button>
-      <Typography variant="body2" sx={{ mt: 3 }} textAlign="center">
+      
+      {/* <Typography variant="body2" sx={{ mt: 1 , color: "#ffffff"}} textAlign="center">----------OR----------</Typography>
+      <Box sx={{height: "10px",width: "100px", color: "#ffffff"}} ></Box> */}
+      <Typography variant="body2" sx={{ mt: 2 , color: "#ffffff"}} textAlign="center">
         Don't have an account?{" "}
         <Link
           onClick={navigateRegister}
@@ -148,9 +183,11 @@ function Login() {
             textDecorationColor: "primary.main",
             textUnderlineOffset: "4px",
             cursor: "pointer",
-            color: "primary.main",
+            fontSize: "12px",
+            // color: "primary.main",
+            color: "#ffffff",
             "&:hover": {
-              color: "secondary.main",
+              color: "#8AA624",
               textDecorationColor: "secondary.main"
             },
           }}
@@ -158,23 +195,8 @@ function Login() {
           Please Register.
         </Link>
         <br />
-        <br />
-        <Link
-          onClick={navigateForgotPassword}
-          sx={{
-            textDecoration: "underline",
-            textDecorationColor: "primary.main",
-            textUnderlineOffset: "4px",
-            cursor: "pointer",
-            color: "primary.main",
-            "&:hover": {
-              color: "secondary.main",
-              textDecorationColor: "secondary.main",
-            },
-          }}
-        >
-          Forgot Password.
-        </Link>
+        {/* <br /> */}
+        
       </Typography>
       <CustomSnackbar message={apiError} open={open} setOpen={setOpen} severity={severity}/>
     </Box>

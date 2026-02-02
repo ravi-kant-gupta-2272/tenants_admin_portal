@@ -20,6 +20,17 @@ function TextInputField({
       value={value}
       onChange={onChange}
       required={required}
+      sx={{
+        label: { color: "#ffffff" },
+        color: "#ffffff",
+        '& .MuiOutlinedInput-root': {
+          '& fieldset': { borderColor: "#ffffff" },
+          '&:hover fieldset': { borderColor: "#ffffff" },
+          '&.Mui-focused fieldset': { borderColor: "#ffffff" },
+        },
+        '& .MuiInputLabel-root': { color: "#ffffff" },
+        '& .MuiInputBase-input': { color: "#ffffff" },
+      }}
     />
   );
 }
