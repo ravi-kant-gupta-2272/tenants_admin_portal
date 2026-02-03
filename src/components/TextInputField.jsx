@@ -44,12 +44,12 @@ function TextInputField({
         ),
       }}
       sx={{
-        "& .MuiInputLabel-root": { color: "#fff" },
-        "& .MuiInputBase-input": { color: "#fff" },
-        "& .MuiOutlinedInput-root": {
-          "& fieldset": { borderColor: "#fff" },
-          "&:hover fieldset": { borderColor: "#fff" },
-          "&.Mui-focused fieldset": { borderColor: "#fff" },
+        label: { color: "#ffffff" },
+        color: "#ffffff",
+        '& .MuiOutlinedInput-root': {
+          '& fieldset': { borderColor: "#ffffff" },
+          '&:hover fieldset': { borderColor: "#ffffff" },
+          '&.Mui-focused fieldset': { borderColor: "#ffffff" },
         },
       }}
     />

@@ -62,34 +62,27 @@ export default function Register() {
   }
 }
 
-  const [snackbar, setSnackbar] = useState({
-    open: false,
-    message: "",
-    severity: "success",
-  });
-
-  const handleCloseSnackbar = () => {
-    setSnackbar({ ...snackbar, open: false });
-  };
-   
-
   return (
-    <Container maxWidth="sm">
+    // <Container maxWidth="sm" >
+      
       <Box
         sx={{
-          minHeight: "100vh",
-          display: "flex",
-          alignItems: "center",
-          py: 4,
+          width: 400,
+        mx: "auto",
+        mt: 10,
+        p: 4,
+        boxShadow: 1,
+        borderRadius: 2,
+        backgroundColor: "#27586fff",
         }}
       >
-        <Paper elevation={3} sx={{ p: 4, width: "100%" }}>
+        {/* <Paper elevation={0} sx={{ p: 4, width: "100%", backgroundColor: "#0ea4eaff"}}> */}
           <Typography
             variant="h4"
             component="h1"
             gutterBottom
             align="center"
-            sx={{ mb: 3 }}
+            sx={{ mb: 3, color: "#ffffff" }}
           >
             Register
           </Typography>
@@ -112,7 +105,18 @@ export default function Register() {
               onChange={handleChange}
               onBlur={handleBlur}
               error={touched.name && Boolean(errors.name)}
-              sx={{ mb: 0 }}
+              sx={{ 
+                mb: 0, 
+                label: { color: "#ffffff" },
+                color: "#ffffff", 
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': { borderColor: "#ffffff" },
+                  '&:hover fieldset': { borderColor: "#ffffff" },
+                  '&.Mui-focused fieldset': { borderColor: "#ffffff" },
+                },
+                '& .MuiInputLabel-root': { color: "#ffffff" },
+                '& .MuiInputBase-input': { color: "#ffffff" },
+              }}
             />
             {touched.name && errors.name ? (
               <Typography
@@ -136,7 +140,18 @@ export default function Register() {
               margin="normal"
               disabled={loading}
               error={touched.email && Boolean(errors.email)}
-              sx={{ mb: 0 }}
+              sx={{ 
+                mb: 0,
+                label: { color: "#ffffff" },
+                color: "#ffffff",
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': { borderColor: "#ffffff" },
+                  '&:hover fieldset': { borderColor: "#ffffff" },
+                  '&.Mui-focused fieldset': { borderColor: "#ffffff" },
+                },
+                '& .MuiInputLabel-root': { color: "#ffffff" },
+                '& .MuiInputBase-input': { color: "#ffffff" },
+              }}
             />
             {touched.email && errors.email ? (
               <Typography
@@ -200,7 +215,7 @@ export default function Register() {
               variant="contained"
               size="large"
               disabled={loading}
-              sx={{ mt: 3, mb: 2, position: "relative" }}
+              sx={{ mt: 3, mb: 2, position: "relative", backgroundColor: "#8AA624" }}
             >
                  {loading ? (
           <CircularProgress size={24}  color="secondary"/>
@@ -209,24 +224,13 @@ export default function Register() {
         )}
             </Button>
           </Box>
-        </Paper>
+        {/* </Paper> */}
+         
          <CustomSnackbar message={apiError} open={open} setOpen={setOpen} severity={severity} />
+      
       </Box>
 
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert
-          onClose={handleCloseSnackbar}
-          severity={snackbar.severity}
-          sx={{ width: "100%" }}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
-    </Container>
+      
+    //</Container>
   );
 }
