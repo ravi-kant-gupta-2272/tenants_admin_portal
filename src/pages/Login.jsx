@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Box, Button, Typography, Link, Alert, } from "@mui/material";
+import { Box, Button, Typography, Link, Alert, Container, } from "@mui/material";
 import TextInputField from "../components/TextInputField.jsx";
-import { RiAdminFill } from "react-icons/ri";
+// import { RiAdminFill } from "react-icons/ri";
 import { IoMdPerson } from "react-icons/io";
 // import { BsPersonWorkspace } from "react-icons/bs";
 // import { IoPersonCircleOutline } from "react-icons/io5";
@@ -64,22 +64,56 @@ function Login() {
   };
 
   return (
+    <Box 
+    sx={{
+      backgroundColor: "#27586fff",
+      height: "100vh",
+      width: "100vw",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      // padding: 0,
+      // margin: 0,
+    }}
+    >
     <Box
       component="form"
       onSubmit={handleSubmit}
-      noValidate 
+      noValidate
       sx={{
-        width: 360,
+        width: {
+          xs: "80%",     // phones
+          sm: 380,       // small tablets
+          md: 420,       // laptops
+        },
+        maxWidth: 440,   // safety cap
         mx: "auto",
-        mt: 10,
-        p: 4,
+
+        mt: {
+          xs: 2,
+          sm: 6,
+          md: 10,
+        },
+
+        p: {
+          xs: 2,
+          sm: 3,
+          md: 4,
+        },
         pt: 1,
-        boxShadow: 1,
-        borderRadius: 2,
-        backgroundColor: "#27586fff",
-        
+
+        borderRadius: {
+          xs: 2,
+          sm: 3,
+        },
+        background: "rgba(255, 255, 255, 0.15)",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
+        border: "1px solid rgba(255, 255, 255, 0.3)",
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.25)",
       }}
     >
+
       {/* <RiAdminFill /> */}
       <IoMdPerson size={100} style={{ display: "block", margin: "0 auto", color:"#ffffff"}} />
       <Typography variant="h5" mb={2} textAlign="center" color="#ffffff">
@@ -117,6 +151,7 @@ function Login() {
           name="password"
           type="password"
           margin="normal"
+          hidePassword = {true}
           value={values.password}
           onChange={handleChange}
           onBlur={handleBlur}
@@ -195,10 +230,11 @@ function Login() {
           Please Register.
         </Link>
         <br />
-        {/* <br /> */}
         
       </Typography>
-      <CustomSnackbar message={apiError} open={open} setOpen={setOpen} severity={severity}/>
+      
+    </Box>
+    <CustomSnackbar message={apiError} open={open} setOpen={setOpen} severity={severity}/>
     </Box>
   );
 }

@@ -1,4 +1,7 @@
-import { TextField } from "@mui/material";
+import { TextField, IconButton, InputAdornment } from "@mui/material";
+import { useState } from "react";
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 function TextInputField({
   fullWidth = true,
@@ -9,17 +12,37 @@ function TextInputField({
   value,
   onChange,
   required,
+  hidePassword = false
 }) {
+  const [isObscure, setobscure] = useState(hidePassword);
+
+  const handleClickShowPassword = () => setobscure((show) => !show);
+
   return (
     <TextField
       fullWidth={fullWidth}
       label={label}
       name={name}
-      type={type}
+      type={hidePassword ? (isObscure ? type : "text" ): type}
       margin={margin}
       value={value}
       onChange={onChange}
       required={required}
+      InputProps={{
+        endAdornment: hidePassword && (
+          <InputAdornment position="end">
+            <IconButton
+              aria-label={isObscure ? "Show password" : "Hide password"}
+              onClick={handleClickShowPassword}
+              onMouseDown={(e) => e.preventDefault()}
+              edge="end"
+              sx={{color:"#ffffff"}}
+            >
+              {isObscure ? <VisibilityOff color="#ffffff" /> : <Visibility color="#ffffff"/>}
+            </IconButton>
+          </InputAdornment>
+        ),
+      }}
       sx={{
         label: { color: "#ffffff" },
         color: "#ffffff",
@@ -28,10 +51,9 @@ function TextInputField({
           '&:hover fieldset': { borderColor: "#ffffff" },
           '&.Mui-focused fieldset': { borderColor: "#ffffff" },
         },
-        '& .MuiInputLabel-root': { color: "#ffffff" },
-        '& .MuiInputBase-input': { color: "#ffffff" },
       }}
     />
+
   );
 }
 
