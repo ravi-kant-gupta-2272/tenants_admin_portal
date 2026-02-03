@@ -36,7 +36,10 @@ function TextInputField({
               onClick={handleClickShowPassword}
               onMouseDown={(e) => e.preventDefault()}
               edge="end"
-              sx={{color:"#ffffff"}}
+              sx={{color:"#ffffff", p: {
+      xs: 0.5,
+      sm: 1,
+    }}}
             >
               {isObscure ? <VisibilityOff color="#ffffff" /> : <Visibility color="#ffffff"/>}
             </IconButton>
@@ -47,19 +50,38 @@ function TextInputField({
         label: { color: "#ffffff" },
         color: "#ffffff",
          "& .MuiInputBase-input": {
-            color: "#ffffff",          
-          },
-          "& .MuiInputLabel-root": {
-            color: "#ffffff",
-          },
-          "& .MuiInputLabel-root.Mui-focused": {
-            color: "#ffffff",
-          },
-          "& .MuiOutlinedInput-root": {
-            "& fieldset": { borderColor: "#ffffff" },
-            "&:hover fieldset": { borderColor: "#ffffff" },
-            "&.Mui-focused fieldset": { borderColor: "#ffffff" },
-          },
+    color: "#fff",
+    fontSize: {
+      xs: "0.9rem",
+      sm: "1rem",
+    },
+    padding: {
+      xs: "12px",
+      sm: "14px",
+    },
+  },
+
+  "& .MuiInputLabel-root": {
+    color: "#fff",
+    fontSize: {
+      xs: "0.85rem",
+      sm: "0.95rem",
+    },
+  },
+
+  "& .MuiInputLabel-root.Mui-focused": {
+    color: "#fff",
+  },
+
+  "& .MuiOutlinedInput-root": {
+    minHeight: {
+      xs: 48,   // 👈 mobile tap target
+      sm: 56,
+    },
+    "& fieldset": { borderColor: "#fff" },
+    "&:hover fieldset": { borderColor: "#fff" },
+    "&.Mui-focused fieldset": { borderColor: "#fff" },
+  },
       }}
     />
 
