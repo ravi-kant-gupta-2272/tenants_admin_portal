@@ -122,8 +122,15 @@ function Login() {
     >
 
       {/* <RiAdminFill /> */}
-      <IoMdPerson size={100} style={{ display: "block", margin: "0 auto", color:"#ffffff"}} />
-      <Typography variant="h5" mb={2} textAlign="center" color="#ffffff">
+      <IoMdPerson size={100} style={{ display: "block", margin: "0 auto", color:"#ffffff", fontSize: "clamp(64px, 20vw, 100px)",}} />
+      <Typography variant="h5" 
+        sx={{
+          fontSize: { xs: "1.25rem", sm: "1.5rem" },
+          mb: 2,
+          textAlign: "center",
+          color: "#fff",
+        }}
+      >
         Admin Login
       </Typography>
       <Box>
