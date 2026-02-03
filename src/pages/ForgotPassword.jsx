@@ -64,11 +64,18 @@ function ResetPassword() {
     <Box 
     sx={{
       backgroundColor: "#27586fff",
-      height: "100vh",
+      // height: "100vh",
+      minHeight: "100dvh",
       width: "100vw",
       display: "flex",
-      alignItems: "center",
+      // alignItems: "center",
+      alignItems: {
+        xs: "flex-start",
+        sm: "center",
+      },
       justifyContent: "center",
+      overflowY: "auto",
+        py: { xs: 2, sm: 2 },
       // padding: 0,
       // margin: 0,
     }}
