@@ -8,9 +8,9 @@ export default function CustomSnackbar({
   message = "server error",
   open,
   setOpen,
-  severity = "error", // to toggel color if api respons is kind of error
+  severity = "error",
 }) {
-  //console.log(message, open);
+ 
 const getBackgroundColor = () => {
   switch (severity) {
     case "success":
@@ -47,7 +47,6 @@ const getBackgroundColor = () => {
 
   return (
     <div>
-      {/* <Button onClick={handleClick}>Open Snackbar</Button> */}
       <Snackbar
         open={open}
         autoHideDuration={2000}

@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Box, Button, Typography, Link, Alert, } from "@mui/material";
+import { Box, Button, Typography, Link, Alert, Container, FormControlLabel, Checkbox } from "@mui/material";
 import TextInputField from "../components/TextInputField.jsx";
-import { RiAdminFill } from "react-icons/ri";
+// import { RiAdminFill } from "react-icons/ri";
 import { IoMdPerson } from "react-icons/io";
 // import { BsPersonWorkspace } from "react-icons/bs";
 // import { IoPersonCircleOutline } from "react-icons/io5";
@@ -22,6 +22,7 @@ const initialValues = {
 function Login() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [isRemember, setRemember] = useState(false);
   const [apiError, setApiError] = useState("");
   const [open, setOpen] = useState(false);
   const [severity, setSeverity] = useState("error"); 
@@ -33,53 +34,93 @@ function Login() {
       onSubmit: handleLoginFunction,
     });
 
-    async function handleLoginFunction(values, action) {
-      setLoading(true);
+  async function handleLoginFunction(values, action) {
+    setLoading(true);
 
-      try {
-      
-        await axios.post(`${BASE_URL}${ENDPOINTS.LOGIN}`, values);
+    try {
+    
+      await axios.post(`${BASE_URL}${ENDPOINTS.LOGIN}`, values);
 
-        setSeverity("success");
-        setApiError("Login Success. Navigating to dashboard");
-        setOpen(true);
+      setSeverity("success");
+      setApiError("Login Success. Navigating to dashboard");
+      setOpen(true);
 
-        setTimeout(() => {
-          setLoading(false);
-          action.resetForm();
-          localStorage.setItem("authToken", "true");
-          navigate("/dashboard", { replace: true, relative: "path" });
-        }, 2000);
-
-      } catch (error) {
-        setSeverity("error");
-        setApiError(error.response?.data?.message || "Login failed");
-        setOpen(true);
+      setTimeout(() => {
         setLoading(false);
-      }
+        action.resetForm();
+        localStorage.setItem("authToken", "true");
+        navigate("/dashboard", { replace: true, relative: "path" });
+      }, 2000);
+
+    } catch (error) {
+      setSeverity("error");
+      setApiError(error.response?.data?.message || "Login failed");
+      setOpen(true);
+      setLoading(false);
     }
+  }
+
   const navigateRegister = () => navigate("/register");
   const navigateForgotPassword = () => {
     navigate("/forgotpassword");
   };
 
+  const onSelectRememberMe = ()=>{
+    console.log("Remember Me selected");
+    setRemember(!isRemember);
+  }
+
   return (
+    <Box 
+      sx={{
+        backgroundColor: "#27586fff",
+        height: "100vh",
+        width: "100vw",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        // padding: 0,
+        // margin: 0,
+      }}
+    >
     <Box
       component="form"
       onSubmit={handleSubmit}
-      noValidate 
+      noValidate
       sx={{
-        width: 360,
+        width: {
+          xs: "80%",     // phones
+          sm: 380,       // small tablets
+          md: 420,       // laptops
+        },
+        maxWidth: 440,   // safety cap
         mx: "auto",
-        mt: 10,
-        p: 4,
+
+        mt: {
+          xs: 2,
+          sm: 6,
+          md: 10,
+        },
+
+        p: {
+          xs: 2,
+          sm: 3,
+          md: 4,
+        },
         pt: 1,
-        boxShadow: 1,
-        borderRadius: 2,
-        backgroundColor: "#27586fff",
-        
+
+        borderRadius: {
+          xs: 2,
+          sm: 3,
+        },
+        background: "rgba(255, 255, 255, 0.15)",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
+        border: "1px solid rgba(255, 255, 255, 0.3)",
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.25)",
       }}
     >
+
       {/* <RiAdminFill /> */}
       <IoMdPerson size={100} style={{ display: "block", margin: "0 auto", color:"#ffffff"}} />
       <Typography variant="h5" mb={2} textAlign="center" color="#ffffff">
@@ -117,6 +158,7 @@ function Login() {
           name="password"
           type="password"
           margin="normal"
+          hidePassword = {true}
           value={values.password}
           onChange={handleChange}
           onBlur={handleBlur}
@@ -135,8 +177,21 @@ function Login() {
       </Box>
       {/* <br /> */}
       <Box
-      sx={{ display: "flex", justifyContent: "flex-end", mt: 0 }}
+      sx={{ display: "flex", justifyContent: "space-between" , alignItems:"center", mt: 0 }}
       >
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={isRemember}
+              onChange={onSelectRememberMe}
+              name="remember"
+              sx={{ color: "#ffffff", '&.Mui-checked': { color: "#ffffff" } }}
+            />
+          }
+          label="Remember Me"
+          sx={{ color: "#ffffff", fontSize: "10px", boxSizing: "border-box" }}
+        />
+
         <Link
           onClick={navigateForgotPassword}
           sx={{
@@ -195,10 +250,11 @@ function Login() {
           Please Register.
         </Link>
         <br />
-        {/* <br /> */}
         
       </Typography>
-      <CustomSnackbar message={apiError} open={open} setOpen={setOpen} severity={severity}/>
+      
+    </Box>
+    <CustomSnackbar message={apiError} open={open} setOpen={setOpen} severity={severity}/>
     </Box>
   );
 }

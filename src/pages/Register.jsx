@@ -4,6 +4,7 @@ import axios from "axios";
 import { useFormik } from "formik";
 import { registerSchema } from "../schemas/RegisterValidationSchema";
 import TextInputField from "../components/TextInputField";
+import { IoMdPerson } from "react-icons/io";
 import CustomSnackbar from "../components/CustomSnackbar";
 import { BASE_URL, ENDPOINTS } from "../api/apiConfig.js";
 import CircularProgress from '@mui/material/CircularProgress';
@@ -64,18 +65,56 @@ export default function Register() {
 
   return (
     // <Container maxWidth="sm" >
-      
+       <Box 
+    sx={{
+      backgroundColor: "#27586fff",
+      height: "100vh",
+      width: "100vw",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      // padding: 0,
+      // margin: 0,
+    }}
+    >
       <Box
-        sx={{
-          width: 400,
+        component="form"
+      onSubmit={handleSubmit}
+      noValidate
+      sx={{
+        width: {
+          xs: "80%",     // phones
+          sm: 380,       // small tablets
+          md: 420,       // laptops
+        },
+        maxWidth: 440,   // safety cap
         mx: "auto",
-        mt: 10,
-        p: 4,
-        boxShadow: 1,
-        borderRadius: 2,
-        backgroundColor: "#27586fff",
-        }}
+
+        mt: {
+          xs: 2,
+          sm: 6,
+          md: 10,
+        },
+
+        p: {
+          xs: 2,
+          sm: 3,
+          md: 4,
+        },
+        pt: 1,
+
+        borderRadius: {
+          xs: 2,
+          sm: 3,
+        },
+        background: "rgba(255, 255, 255, 0.15)",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
+        border: "1px solid rgba(255, 255, 255, 0.3)",
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.25)",
+      }}
       >
+        <IoMdPerson size={100} style={{ display: "block", margin: "0 auto", color:"#ffffff"}} />
         {/* <Paper elevation={0} sx={{ p: 4, width: "100%", backgroundColor: "#0ea4eaff"}}> */}
           <Typography
             variant="h4"
@@ -170,6 +209,7 @@ export default function Register() {
               name="password"
               type="password"
               margin="normal"
+              hidePassword={true}
               value={values.password}
               onChange={handleChange}
               onBlur={handleBlur}
@@ -193,6 +233,7 @@ export default function Register() {
               name="confirmPassword"
               type="password"
               margin="normal"
+              hidePassword={true}
               value={values.confirmPassword}
               onChange={handleChange}
               onBlur={handleBlur}
@@ -229,7 +270,7 @@ export default function Register() {
          <CustomSnackbar message={apiError} open={open} setOpen={setOpen} severity={severity} />
       
       </Box>
-
+        </Box>
       
     //</Container>
   );
