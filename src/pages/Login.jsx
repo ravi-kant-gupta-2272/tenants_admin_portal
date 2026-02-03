@@ -74,11 +74,18 @@ function Login() {
     <Box 
       sx={{
         backgroundColor: "#27586fff",
-        height: "100vh",
+        // height: "100vh",
+        minHeight: "100dvh",
         width: "100vw",
         display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
+        alignItems: {
+      xs: "flex-start",     // 👈 important
+      sm: "center",
+    },
+    justifyContent: "center",
+    overflowY: "auto",      // 👈 allow scroll
+    py: { xs: 2, sm: 0 },
+        // justifyContent: "center",
         // padding: 0,
         // margin: 0,
       }}
