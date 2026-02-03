@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Box, Button, Typography, Link, Alert, Container, } from "@mui/material";
+import { Box, Button, Typography, Link, Alert, Container, FormControlLabel, Checkbox } from "@mui/material";
 import TextInputField from "../components/TextInputField.jsx";
 // import { RiAdminFill } from "react-icons/ri";
 import { IoMdPerson } from "react-icons/io";
@@ -22,6 +22,7 @@ const initialValues = {
 function Login() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [isRemember, setRemember] = useState(false);
   const [apiError, setApiError] = useState("");
   const [open, setOpen] = useState(false);
   const [severity, setSeverity] = useState("error"); 
@@ -33,48 +34,54 @@ function Login() {
       onSubmit: handleLoginFunction,
     });
 
-    async function handleLoginFunction(values, action) {
-      setLoading(true);
+  async function handleLoginFunction(values, action) {
+    setLoading(true);
 
-      try {
-      
-        await axios.post(`${BASE_URL}${ENDPOINTS.LOGIN}`, values);
+    try {
+    
+      await axios.post(`${BASE_URL}${ENDPOINTS.LOGIN}`, values);
 
-        setSeverity("success");
-        setApiError("Login Success. Navigating to dashboard");
-        setOpen(true);
+      setSeverity("success");
+      setApiError("Login Success. Navigating to dashboard");
+      setOpen(true);
 
-        setTimeout(() => {
-          setLoading(false);
-          action.resetForm();
-          localStorage.setItem("authToken", "true");
-          navigate("/dashboard", { replace: true, relative: "path" });
-        }, 2000);
-
-      } catch (error) {
-        setSeverity("error");
-        setApiError(error.response?.data?.message || "Login failed");
-        setOpen(true);
+      setTimeout(() => {
         setLoading(false);
-      }
+        action.resetForm();
+        localStorage.setItem("authToken", "true");
+        navigate("/dashboard", { replace: true, relative: "path" });
+      }, 2000);
+
+    } catch (error) {
+      setSeverity("error");
+      setApiError(error.response?.data?.message || "Login failed");
+      setOpen(true);
+      setLoading(false);
     }
+  }
+
   const navigateRegister = () => navigate("/register");
   const navigateForgotPassword = () => {
     navigate("/forgotpassword");
   };
 
+  const onSelectRememberMe = ()=>{
+    console.log("Remember Me selected");
+    setRemember(!isRemember);
+  }
+
   return (
     <Box 
-    sx={{
-      backgroundColor: "#27586fff",
-      height: "100vh",
-      width: "100vw",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      // padding: 0,
-      // margin: 0,
-    }}
+      sx={{
+        backgroundColor: "#27586fff",
+        height: "100vh",
+        width: "100vw",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        // padding: 0,
+        // margin: 0,
+      }}
     >
     <Box
       component="form"
@@ -170,8 +177,21 @@ function Login() {
       </Box>
       {/* <br /> */}
       <Box
-      sx={{ display: "flex", justifyContent: "flex-end", mt: 0 }}
+      sx={{ display: "flex", justifyContent: "space-between" , alignItems:"center", mt: 0 }}
       >
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={isRemember}
+              onChange={onSelectRememberMe}
+              name="remember"
+              sx={{ color: "#ffffff", '&.Mui-checked': { color: "#ffffff" } }}
+            />
+          }
+          label="Remember Me"
+          sx={{ color: "#ffffff", fontSize: "10px", boxSizing: "border-box" }}
+        />
+
         <Link
           onClick={navigateForgotPassword}
           sx={{
