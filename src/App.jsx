@@ -5,6 +5,8 @@ import "./App.css";
 import Dashboard from "./components/Dashboard.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
 
+import ProtectedRoutes from "./pages/ProtectedRoutes.jsx";
+
 function App() {
   return (
     <>
@@ -13,7 +15,11 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="*" element={<Navigate to="/login"/>} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={
+        <ProtectedRoutes>
+            <Dashboard />
+        </ProtectedRoutes>
+          } />
       </Routes>
     </>
   );

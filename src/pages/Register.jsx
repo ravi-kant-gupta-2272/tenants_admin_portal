@@ -84,8 +84,8 @@ export default function Register() {
       }}
     >
       <Box
-        component="form"
-        onSubmit={handleSubmit}
+        // component="form"
+        // onSubmit={handleSubmit}
         noValidate
         sx={{
           width: {

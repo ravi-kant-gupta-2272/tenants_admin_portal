@@ -22,6 +22,7 @@ import { BASE_URL, ENDPOINTS } from "../api/apiConfig.js";
 import CustomSnackbar from "../components/CustomSnackbar.jsx";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Height, WidthFull } from "@mui/icons-material";
+import { Navigate } from "react-router-dom";
 
 const initialValues = {
   email: "",
@@ -43,12 +44,20 @@ function Login() {
       onSubmit: handleLoginFunction,
     });
 
+      // BLOCK LOGIN PAGE IF USER ALREADY LOGGED IN
+  
+    if (localStorage.getItem("authToken")) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  
+
   async function handleLoginFunction(values, action) {
+   
     setLoading(true);
 
     try {
       await axios.post(`${BASE_URL}${ENDPOINTS.LOGIN}`, values);
-
+      
       setSeverity("success");
       setApiError("Login Success. Navigating to dashboard");
       setOpen(true);

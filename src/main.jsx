@@ -4,11 +4,15 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import "./index.css";
 import App from "./App.jsx";
+import Dashboard from "./components/Dashboard.jsx";
+import ProtectedRoutes from "./pages/ProtectedRoutes.jsx";
+
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
       <App />
     </BrowserRouter>
+    
   </StrictMode>,
 );

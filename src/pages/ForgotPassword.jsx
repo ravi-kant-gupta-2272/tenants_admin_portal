@@ -37,9 +37,9 @@ function ResetPassword() {
   setLoading(true);
 
   try {
-    const resp = await axios.post(
+    await axios.post(
       `${BASE_URL}${ENDPOINTS.RESET}`,
-      values
+      {...values,'token':`eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNhY2hpbmRyYS5wYW5kZXlAc3RpZ2Fzb2Z0LmNvbSIsImlhdCI6MTc3MDI3ODkxNywiZXhwIjoxNzcwMjc5MjE3fQ.rWpoPNn-ikBITZXVrA2k27dXuaMZfd1fs11NyUxJB5Q`}
     );
 
     setApiError("Password Reset Success! Navigating to login page");

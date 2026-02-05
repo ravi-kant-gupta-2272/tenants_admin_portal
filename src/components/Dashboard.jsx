@@ -28,6 +28,7 @@ import {
   Logout as LogoutIcon,
   Person as PersonIcon,
 } from "@mui/icons-material";
+import MerchantDashboard from "./dashboard_componet/MerchantDashboard";
 
 const drawerWidth = 240;
 
@@ -37,7 +38,7 @@ const DashboardContent = () => (
     <Typography variant="h4" gutterBottom>
       Dashboard
     </Typography>
-    <Typography variant="body1">Welcome to Transaction dashboard!</Typography>
+    {/* <Typography variant="body1">Welcome to Transaction dashboard!</Typography> */}
   </Box>
 );
 
@@ -100,6 +101,7 @@ export default function Dashboard() {
   const handleSignOut = () => {
     handleProfileMenuClose();
     // Add your logout logic here
+    localStorage.removeItem("authToken")
     console.log("Signing out...");
     navigate("/login");
   };
@@ -107,7 +109,7 @@ export default function Dashboard() {
   // Menu items configuration
   const menuItems = [
     { id: "dashboard", label: "Dashboard", icon: <DashboardIcon /> },
-    { id: "users", label: "Users", icon: <PeopleIcon /> },
+    { id: "merchent", label: "Manage Merchent", icon: <PeopleIcon /> },
     { id: "reports", label: "Reports", icon: <BarChartIcon /> },
     { id: "settings", label: "Settings", icon: <SettingsIcon /> },
   ];
@@ -117,8 +119,8 @@ export default function Dashboard() {
     switch (selectedMenu) {
       case "dashboard":
         return <DashboardContent />;
-      case "users":
-        return <UsersContent />;
+      case "merchent":
+        return <MerchantDashboard/>;
       case "reports":
         return <ReportsContent />;
       case "settings":
@@ -160,6 +162,7 @@ export default function Dashboard() {
         position="fixed"
         sx={{
           zIndex: (theme) => theme.zIndex.drawer + 1,
+           backgroundColor: "#27586fff",
         }}
       >
         <Toolbar>
@@ -179,7 +182,7 @@ export default function Dashboard() {
           {/* Right side - Profile and Sign Out */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <IconButton onClick={handleProfileMenuOpen} sx={{ p: 0 }}>
-              <Avatar sx={{ bgcolor: "secondary.main" }}>
+              <Avatar sx={{ bgcolor:'#8AA624' }}>
                 <PersonIcon />
               </Avatar>
             </IconButton>
