@@ -11,10 +11,7 @@ import {
   Checkbox,
 } from "@mui/material";
 import TextInputField from "../components/TextInputField.jsx";
-// import { RiAdminFill } from "react-icons/ri";
 import { IoMdPerson } from "react-icons/io";
-// import { BsPersonWorkspace } from "react-icons/bs";
-// import { IoPersonCircleOutline } from "react-icons/io5";
 import axios from "axios";
 import { useFormik } from "formik";
 import { loginSchema } from "../schemas/LoginValidationSchema.jsx";
@@ -44,20 +41,16 @@ function Login() {
       onSubmit: handleLoginFunction,
     });
 
-      // BLOCK LOGIN PAGE IF USER ALREADY LOGGED IN
-  
-    if (localStorage.getItem("authToken")) {
+  if (localStorage.getItem("authToken")) {
     return <Navigate to="/dashboard" replace />;
   }
-  
 
   async function handleLoginFunction(values, action) {
-   
     setLoading(true);
 
     try {
       await axios.post(`${BASE_URL}${ENDPOINTS.LOGIN}`, values);
-      
+
       setSeverity("success");
       setApiError("Login Success. Navigating to dashboard");
       setOpen(true);

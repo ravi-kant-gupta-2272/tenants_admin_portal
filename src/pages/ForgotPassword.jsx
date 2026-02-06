@@ -220,8 +220,9 @@ function ResetPassword() {
           Back to Login
         </Link>
       </Typography>
-      <CustomSnackbar message={apiError} open={open} setOpen={setOpen} severity={severity}/>
+    
     </Box>
+      <CustomSnackbar message={apiError} open={open} setOpen={setOpen} severity={severity}/>
     </Box>
   );
 }
