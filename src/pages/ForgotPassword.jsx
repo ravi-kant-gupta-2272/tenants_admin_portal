@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState} from "react";
 import { Box, Button, Typography, Link } from "@mui/material";
 import TextInputField from "../components/TextInputField.jsx";
 import { passwordResetSchema } from "../schemas/PasswordResetValidationSchema.jsx";
@@ -10,10 +10,10 @@ import { BASE_URL } from "../api/apiConfig.js";
 import CustomSnackbar from "../components/CustomSnackbar.jsx";
 import { ENDPOINTS } from "../api/apiConfig.js";
 import CircularProgress from '@mui/material/CircularProgress';
+import { useSearchParams } from "react-router-dom";
 function ResetPassword() {
   
   const initialValues = {
-    email: "",
     password: "",
     forgotPassword: ""
   };
@@ -22,7 +22,9 @@ function ResetPassword() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [severity, setSeverity] = useState("error"); 
-
+ const [searchParams] = useSearchParams();
+ const token = searchParams.get('token');
+ console.log(token)
   const navigateLogin = () => {
     navigate("/login");
   };
@@ -39,7 +41,7 @@ function ResetPassword() {
   try {
     await axios.post(
       `${BASE_URL}${ENDPOINTS.RESET}`,
-      {...values,'token':`eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNhY2hpbmRyYS5wYW5kZXlAc3RpZ2Fzb2Z0LmNvbSIsImlhdCI6MTc3MDI3ODkxNywiZXhwIjoxNzcwMjc5MjE3fQ.rWpoPNn-ikBITZXVrA2k27dXuaMZfd1fs11NyUxJB5Q`}
+      {...values,'token':`${token}`}
     );
 
     setApiError("Password Reset Success! Navigating to login page");
@@ -122,26 +124,6 @@ function ResetPassword() {
         Reset Password
       </Typography>
 
-      <TextInputField
-        fullWidth
-        label="Email"
-        name="email"
-        type="email"
-        margin="normal"
-        value={values.email}
-        onChange={handleChange}
-        onBlur={handleBlur}
-
-      />
-      {touched.email && errors.email ? (
-        <Typography
-          color="error"
-          variant="caption"
-          sx={{ mt: 0.5, mb: 2, textAlign: "left" }}
-        >
-          {errors.email}
-        </Typography>
-      ) : null}
 
       <TextInputField
         fullWidth
@@ -228,3 +210,7 @@ function ResetPassword() {
 }
 
 export default ResetPassword;
+
+
+
+

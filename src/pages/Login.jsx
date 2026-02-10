@@ -1,24 +1,24 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import ResetPasswordDialog from "../components/ResetPasswordDialog.jsx";
+import { ParticlesBackground } from "../components/ParticlesBackground.jsx";
 import {
   Box,
   Button,
   Typography,
   Link,
-  Alert,
-  Container,
   FormControlLabel,
   Checkbox,
 } from "@mui/material";
 import TextInputField from "../components/TextInputField.jsx";
 import { IoMdPerson } from "react-icons/io";
+import { sendResetPasswordEmail } from "../services/resetPassword.service";
 import axios from "axios";
 import { useFormik } from "formik";
 import { loginSchema } from "../schemas/LoginValidationSchema.jsx";
 import { BASE_URL, ENDPOINTS } from "../api/apiConfig.js";
 import CustomSnackbar from "../components/CustomSnackbar.jsx";
 import CircularProgress from "@mui/material/CircularProgress";
-import { Height, WidthFull } from "@mui/icons-material";
 import { Navigate } from "react-router-dom";
 
 const initialValues = {
@@ -33,6 +33,7 @@ function Login() {
   const [apiError, setApiError] = useState("");
   const [open, setOpen] = useState(false);
   const [severity, setSeverity] = useState("error");
+  const [openReset, setOpenReset] = useState(false);
 
   const { values, handleBlur, handleChange, errors, handleSubmit, touched } =
     useFormik({
@@ -40,15 +41,33 @@ function Login() {
       validationSchema: loginSchema,
       onSubmit: handleLoginFunction,
     });
-
   if (localStorage.getItem("authToken")) {
     return <Navigate to="/dashboard" replace />;
   }
 
+  const handleResetSubmit = async (email) => {
+    try {
+      const response = await sendResetPasswordEmail(email);
+      console.log("response", response);
+      setSeverity("success");
+      setApiError("Password reset link sent to your email");
+      setOpen(true);
+      setOpenReset(false);
+    } catch (error) {
+      setSeverity("error");
+      setApiError(error.response?.data?.message || "Failed to send reset link");
+      setOpen(true);
+    }
+  };
+
+  const handleOpenDiallog = () => {
+    setOpenReset(true);
+  };
   async function handleLoginFunction(values, action) {
     setLoading(true);
 
     try {
+      console.log(BASE_URL);
       await axios.post(`${BASE_URL}${ENDPOINTS.LOGIN}`, values);
 
       setSeverity("success");
@@ -70,9 +89,6 @@ function Login() {
   }
 
   const navigateRegister = () => navigate("/register");
-  const navigateForgotPassword = () => {
-    navigate("/forgotpassword");
-  };
 
   const onSelectRememberMe = () => {
     console.log("Remember Me selected");
@@ -80,214 +96,232 @@ function Login() {
   };
 
   return (
-    <Box
-      sx={{
-        backgroundColor: "#27586fff",
-        // height: "100vh",
-        minHeight: "100dvh",
-        width: "100vw",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        overflowY: "auto",
-        py: { xs: 2, sm: 2 },
-      }}
-    >
+    <>
       <Box
-        component="form"
-        onSubmit={handleSubmit}
-        noValidate
         sx={{
-          width: {
-            xs: "80%", // phones
-            sm: 380, // small tablets
-            md: 420, // laptops
-          },
-          maxWidth: 440, // safety cap
-          mx: "auto",
-
-          mt: {
-            xs: 2,
-            sm: 6,
-            md: 10,
-          },
-
-          p: {
-            xs: 2,
-            sm: 3,
-            md: 4,
-          },
-          pt: 1,
-
-          borderRadius: {
-            xs: 2,
-            sm: 3,
-          },
-          background: "rgba(255, 255, 255, 0.15)",
-          backdropFilter: "blur(12px)",
-          WebkitBackdropFilter: "blur(12px)",
-          border: "1px solid rgba(255, 255, 255, 0.3)",
-          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.25)",
+          backgroundColor: "#27586fff",
+          height: "100vh",
+          width: "100vw",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          overflowY: "hidden",
+          py: { xs: 2, sm: 2 },
         }}
       >
-        {/* <RiAdminFill /> */}
-        <IoMdPerson
-          size={100}
-          style={{
-            display: "block",
-            margin: "0 auto",
-            color: "#ffffff",
-            fontSize: "clamp(64px, 20vw, 100px)",
-          }}
-        />
-        <Typography
-          variant="h5"
-          sx={{
-            fontSize: { xs: "1.25rem", sm: "1.5rem" },
-            mb: 2,
-            textAlign: "center",
-            color: "#fff",
-          }}
-        >
-          Admin Login
-        </Typography>
-        <Box>
-          <label htmlFor="email"></label>
-          <TextInputField
-            fullWidth
-            label="Email"
-            name="email"
-            type="email"
-            margin="normal"
-            value={values.email}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            error={touched.email && Boolean(errors.email)}
-          />
-
-          {touched.email && errors.email ? (
-            <Typography
-              color="error"
-              variant="caption"
-              sx={{ mt: 0.5, display: "block", textAlign: "left" }}
-            >
-              {errors.email}
-            </Typography>
-          ) : null}
-        </Box>
-        <Box>
-          <label htmlFor="password"></label>
-          <TextInputField
-            fullWidth
-            label="Password"
-            name="password"
-            type="password"
-            margin="normal"
-            hidePassword={true}
-            value={values.password}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            error={touched.password && Boolean(errors.password)}
-          />
-
-          {touched.password && errors.password ? (
-            <Typography
-              color="error"
-              variant="caption"
-              sx={{ mt: 0.5, display: "block", textAlign: "left" }}
-            >
-              {errors.password}
-            </Typography>
-          ) : null}
-        </Box>
-        {/* <br /> */}
         <Box
+          component="form"
+          onSubmit={handleSubmit}
+          noValidate
           sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            mt: 0,
+            //  position: "relative",
+            zIndex: 1,
+            width: {
+              xs: "80%",
+              sm: 380,
+              md: 420,
+            },
+            maxWidth: 440,
+            mx: "auto",
+
+            mt: {
+              xs: 2,
+              sm: 6,
+              md: 10,
+            },
+
+            p: {
+              xs: 2,
+              sm: 3,
+              md: 4,
+            },
+            pt: 1,
+
+            borderRadius: {
+              xs: 2,
+              sm: 3,
+            },
+            background: "rgba(255, 255, 255, 0.15)",
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
+            border: "1px solid rgba(255, 255, 255, 0.3)",
+            boxShadow: "0 8px 32px rgba(0, 0, 0, 0.25)",
           }}
         >
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={isRemember}
-                onChange={onSelectRememberMe}
-                name="remember"
-                sx={{ color: "#ffffff", "&.Mui-checked": { color: "#ffffff" } }}
-              />
-            }
-            label="Remember Me"
-            sx={{ color: "#ffffff", fontSize: "10px", boxSizing: "border-box" }}
+          <IoMdPerson
+            size={100}
+            style={{
+              display: "block",
+              margin: "0 auto",
+              color: "#ffffff",
+              fontSize: "clamp(64px, 20vw, 100px)",
+            }}
           />
-
-          <Link
-            onClick={navigateForgotPassword}
+          <Typography
+            variant="h5"
             sx={{
-              textAlign: "right",
-              textDecoration: "underline",
-              textDecorationColor: "primary.main",
-              textUnderlineOffset: "4px",
-              cursor: "pointer",
-              fontSize: "12px",
-              color: "#ffffff",
-              "&:hover": {
-                color: "#8AA624",
-                textDecorationColor: "secondary.main",
-              },
+              fontSize: { xs: "1.25rem", sm: "1.5rem" },
+              mb: 2,
+              textAlign: "center",
+              color: "#fff",
             }}
           >
-            Forgot Password.
-          </Link>
+            Admin Login
+          </Typography>
+          <Box>
+            <label htmlFor="email"></label>
+            <TextInputField
+              fullWidth
+              label="Email"
+              name="email"
+              type="email"
+              margin="normal"
+              value={values.email}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={touched.email && Boolean(errors.email)}
+            />
+
+            {touched.email && errors.email ? (
+              <Typography
+                color="error"
+                variant="caption"
+                sx={{ mt: 0.5, display: "block", textAlign: "left" }}
+              >
+                {errors.email}
+              </Typography>
+            ) : null}
+          </Box>
+          <Box>
+            <label htmlFor="password"></label>
+            <TextInputField
+              fullWidth
+              label="Password"
+              name="password"
+              type="password"
+              margin="normal"
+              hidePassword={true}
+              value={values.password}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={touched.password && Boolean(errors.password)}
+            />
+
+            {touched.password && errors.password ? (
+              <Typography
+                color="error"
+                variant="caption"
+                sx={{ mt: 0.5, display: "block", textAlign: "left" }}
+              >
+                {errors.password}
+              </Typography>
+            ) : null}
+          </Box>
+
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mt: 0,
+            }}
+          >
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={isRemember}
+                  onChange={onSelectRememberMe}
+                  name="remember"
+                  sx={{
+                    color: "#ffffff",
+                    "&.Mui-checked": { color: "#ffffff" },
+                  }}
+                />
+              }
+              label="Remember Me"
+              sx={{
+                color: "#ffffff",
+                fontSize: "10px",
+                boxSizing: "border-box",
+              }}
+            />
+
+            <Link
+              // onClick={navigateForgotPassword}
+              onClick={handleOpenDiallog}
+              sx={{
+                textAlign: "right",
+                textDecoration: "underline",
+                textDecorationColor: "primary.main",
+                textUnderlineOffset: "4px",
+                cursor: "pointer",
+                fontSize: "12px",
+                color: "#ffffff",
+                "&:hover": {
+                  color: "#8AA624",
+                  textDecorationColor: "secondary.main",
+                },
+              }}
+            >
+              Forgot Password.
+            </Link>
+          </Box>
+
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 2, backgroundColor: "#8AA624" }}
+            disabled={loading}
+          >
+            {loading ? (
+              <CircularProgress size={24} color="secondary" />
+            ) : (
+              "Login"
+            )}
+          </Button>
+
+          <Typography
+            variant="body2"
+            sx={{ mt: 2, color: "#ffffff" }}
+            textAlign="center"
+          >
+            Don't have an account?{" "}
+            <Link
+              onClick={navigateRegister}
+              sx={{
+                textDecoration: "underline",
+                textDecorationColor: "primary.main",
+                textUnderlineOffset: "4px",
+                cursor: "pointer",
+                fontSize: "12px",
+
+                color: "#ffffff",
+                "&:hover": {
+                  color: "#8AA624",
+                  textDecorationColor: "secondary.main",
+                },
+              }}
+            >
+              Please Register.
+            </Link>
+            <br />
+          </Typography>
         </Box>
-
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          sx={{ mt: 2, backgroundColor: "#8AA624" }}
-          disabled={loading}
-        >
-          {loading ? <CircularProgress size={24} color="secondary" /> : "Login"}
-        </Button>
-
-        {/* <Typography variant="body2" sx={{ mt: 1 , color: "#ffffff"}} textAlign="center">----------OR----------</Typography>
-      <Box sx={{height: "10px",width: "100px", color: "#ffffff"}} ></Box> */}
-        <Typography
-          variant="body2"
-          sx={{ mt: 2, color: "#ffffff" }}
-          textAlign="center"
-        >
-          Don't have an account?{" "}
-          <Link
-            onClick={navigateRegister}
-            sx={{
-              textDecoration: "underline",
-              textDecorationColor: "primary.main",
-              textUnderlineOffset: "4px",
-              cursor: "pointer",
-              fontSize: "12px",
-              // color: "primary.main",
-              color: "#ffffff",
-              "&:hover": {
-                color: "#8AA624",
-                textDecorationColor: "secondary.main",
-              },
-            }}
-          >
-            Please Register.
-          </Link>
-          <br />
-        </Typography>
+        <CustomSnackbar
+          message={apiError}
+          open={open}
+          setOpen={setOpen}
+          severity={severity}
+        />
+        <ResetPasswordDialog
+          open={openReset}
+          handleClose={() => setOpenReset(false)}
+          onSubmit={handleResetSubmit}
+        />
+        <ParticlesBackground />
       </Box>
-      <CustomSnackbar
-        message={apiError}
-        open={open}
-        setOpen={setOpen}
-        severity={severity}
-      />
-    </Box>
+    </>
   );
 }
 export default Login;

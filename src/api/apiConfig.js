@@ -3,5 +3,6 @@ export const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export const ENDPOINTS = {
   LOGIN: "/user/login",
   REGISTER: "/user/register",
-  RESET:"/user/reset"
+  RESET:"/user/reset",
+  RESETLINK:"/user/reset-link"
 };
