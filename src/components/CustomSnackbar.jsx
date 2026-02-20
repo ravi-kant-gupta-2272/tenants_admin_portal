@@ -10,18 +10,17 @@ export default function CustomSnackbar({
   setOpen,
   severity = "error",
 }) {
- 
-const getBackgroundColor = () => {
-  switch (severity) {
-    case "success":
-      return "#4caf50"; 
-    case "error":
-      return "#d82c66"; 
-    default:
-      return "grey";
-  }
-};
-  
+  const getBackgroundColor = () => {
+    switch (severity) {
+      case "success":
+        return "#4caf50";
+      case "error":
+        return "#d82c66";
+      default:
+        return "grey";
+    }
+  };
+
   const handleClose = (event, reason) => {
     console.log("handleCLose");
 
@@ -53,13 +52,13 @@ const getBackgroundColor = () => {
         onClose={handleClose}
         message={message}
         action={action}
-         slotProps={{
+        slotProps={{
           content: {
             sx: {
               backgroundColor: getBackgroundColor(),
-              color: 'white'
-            }
-          }
+              color: "white",
+            },
+          },
         }}
       />
     </div>

@@ -1,16 +1,16 @@
 import { useCallback } from "react";
 import Particles from "react-tsparticles";
 import { loadSlim } from "tsparticles-slim";
- 
+
 export const ParticlesBackground = () => {
   const particlesInit = useCallback(async (engine) => {
     await loadSlim(engine);
   }, []);
- 
+
   const particlesLoaded = useCallback(async (container) => {
     console.log("Particles loaded", container);
   }, []);
- 
+
   return (
     <div className="particles-container">
       <Particles
@@ -21,7 +21,7 @@ export const ParticlesBackground = () => {
           background: {
             color: {
               // value: "#0a0e27",
-              value: "transparent"
+              value: "transparent",
             },
           },
           fpsLimit: 30,
@@ -88,14 +88,14 @@ export const ParticlesBackground = () => {
           detectRetina: true,
         }}
       />
-      
+
       {/* Your content goes here */}
       <div className="content">
         {/* <h1>Welcome to tsParticles</h1>
         <p>A stunning particle animation background for React</p> */}
       </div>
- 
-      <style jsx>{`
+
+      <style>{`
         .particles-container {
           position: absolute;
           width: 100%;
@@ -156,4 +156,3 @@ export const ParticlesBackground = () => {
     </div>
   );
 };
- 

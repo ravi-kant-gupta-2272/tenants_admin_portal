@@ -69,7 +69,7 @@ export default function Register() {
         backgroundColor: "#27586fff",
         // height: "100vh",
         minHeight: "100dvh",
-        width: "100vw",
+        //width: "100vw",
         display: "flex",
         // alignItems: "center",
         alignItems: {
@@ -84,8 +84,6 @@ export default function Register() {
       }}
     >
       <Box
-        // component="form"
-        // onSubmit={handleSubmit}
         noValidate
         sx={{
           width: {
@@ -121,13 +119,18 @@ export default function Register() {
         }}
       >
         <IoMdPerson
-          size={100}
-          style={{ display: "block", margin: "0 auto", color: "#ffffff" }}
+          size={40}
+          style={{
+            display: "block",
+            margin: "0 auto",
+            color: "#ffffff",
+            mt: 0,
+          }}
         />
         {/* <Paper elevation={0} sx={{ p: 4, width: "100%", backgroundColor: "#0ea4eaff"}}> */}
         <Typography
           variant="h4"
-          component="h1"
+          component="h3"
           gutterBottom
           align="center"
           sx={{ mb: 3, color: "#ffffff" }}
@@ -141,9 +144,16 @@ export default function Register() {
           noValidate
           sx={{ textAlign: "left" }}
         >
+          <Typography
+            color="White"
+            variant="caption"
+            sx={{ mt: 0.5, mb: 2, textAlign: "left" }}
+          >
+            Name
+          </Typography>
           <TextField
             fullWidth
-            label="Name"
+            //label="Name"
             name="name"
             variant="outlined"
             value={values.name}
@@ -154,6 +164,7 @@ export default function Register() {
             error={touched.name && Boolean(errors.name)}
             sx={{
               mb: 0,
+              mt: 0.5,
               label: { color: "#ffffff" },
               color: "#ffffff",
               "& .MuiOutlinedInput-root": {
@@ -174,10 +185,18 @@ export default function Register() {
               {errors.name}
             </Typography>
           ) : null}
-
+          {/* <br></br>
+          <Typography
+            color="white"
+            variant="caption"
+            sx={{ mt: 0.5, mb: 2, textAlign: "left" }}
+          >
+            Email
+          </Typography>
           <TextField
             fullWidth
-            label="Email"
+            // label="Email"
+            //InputLabelProps={{ shrink: true }}
             name="email"
             type="email"
             variant="outlined"
@@ -189,6 +208,7 @@ export default function Register() {
             error={touched.email && Boolean(errors.email)}
             sx={{
               mb: 0,
+              mt: 0.5,
               label: { color: "#ffffff" },
               color: "#ffffff",
               "& .MuiOutlinedInput-root": {
@@ -208,11 +228,20 @@ export default function Register() {
             >
               {errors.email}
             </Typography>
-          ) : null}
+          ) : null} */}
 
-          <TextInputField
+          <br></br>
+          <Typography
+            color="white"
+            variant="caption"
+            sx={{ mt: 0.5, mb: 2, textAlign: "left" }}
+          >
+            Password
+          </Typography>
+
+           <TextInputField
             fullWidth
-            label="Password"
+            // label="Password"
             name="password"
             type="password"
             margin="normal"
@@ -222,6 +251,18 @@ export default function Register() {
             onBlur={handleBlur}
             error={touched.password && Boolean(errors.password)}
           />
+          {/* <TextInputField
+            fullWidth
+            // label="Password"
+            name="password"
+            type="password"
+            margin="normal"
+            hidePassword={true}
+            value={values.password}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            error={touched.password && Boolean(errors.password)}
+          /> */}
 
           {touched.password && errors.password ? (
             <Typography
@@ -233,9 +274,17 @@ export default function Register() {
             </Typography>
           ) : null}
 
+          <br></br>
+          <Typography
+            color="white"
+            variant="caption"
+            sx={{ mt: 0.5, mb: 2, textAlign: "left" }}
+          >
+            Confirm password
+          </Typography>
           <TextInputField
             fullWidth
-            label="Confirm Password"
+            // label="Confirm Password"
             name="confirmPassword"
             type="password"
             margin="normal"

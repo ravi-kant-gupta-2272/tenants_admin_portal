@@ -4,3 +4,4 @@ export const sendResetPasswordEmail = (email) => {
     console.log(axios.post(`${BASE_URL}${ENDPOINTS.RESETLINK}`, { email }))
   return axios.post(`${BASE_URL}${ENDPOINTS.RESETLINK}`, { email });
 };
+

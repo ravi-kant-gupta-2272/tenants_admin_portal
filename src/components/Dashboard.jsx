@@ -1,6 +1,7 @@
 // Dashboard.jsx - Complete Dashboard with Top Navbar and Sidebar
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import {
   Box,
   Drawer,
@@ -27,8 +28,10 @@ import {
   BarChart as BarChartIcon,
   Logout as LogoutIcon,
   Person as PersonIcon,
+  AddBoxSharp,
 } from "@mui/icons-material";
 import MerchantDashboard from "./dashboard_componet/MerchantDashboard";
+import ManageSubscriptions from "./dashboard_componet/ManageSubscriptions";
 
 const drawerWidth = 240;
 
@@ -58,9 +61,7 @@ const ReportsContent = () => (
     <Typography variant="h4" gutterBottom>
       Reports
     </Typography>
-    <Typography variant="body1">
-      View and generate reports for your application.
-    </Typography>
+    <Typography variant="body1">Analytics for subscriptions</Typography>
   </Box>
 );
 
@@ -70,7 +71,7 @@ const SettingsContent = () => (
       Settings
     </Typography>
     <Typography variant="body1">
-      Configure your application settings and preferences.
+      Add/Manage your Subscription settings and preferences.
     </Typography>
   </Box>
 );
@@ -101,7 +102,7 @@ export default function Dashboard() {
   const handleSignOut = () => {
     handleProfileMenuClose();
     // Add your logout logic here
-    localStorage.removeItem("authToken")
+    localStorage.removeItem("authToken");
     console.log("Signing out...");
     navigate("/login");
   };
@@ -109,9 +110,9 @@ export default function Dashboard() {
   // Menu items configuration
   const menuItems = [
     { id: "dashboard", label: "Dashboard", icon: <DashboardIcon /> },
-    { id: "merchent", label: "Manage Merchent", icon: <PeopleIcon /> },
+    { id: "merchant", label: "Manage Merchant", icon: <PeopleIcon /> },
+    { id: "subscription", label: "Subscription", icon: <AddBoxSharp /> },
     { id: "reports", label: "Reports", icon: <BarChartIcon /> },
-    { id: "settings", label: "Settings", icon: <SettingsIcon /> },
   ];
 
   // Render content based on selected menu
@@ -119,12 +120,13 @@ export default function Dashboard() {
     switch (selectedMenu) {
       case "dashboard":
         return <DashboardContent />;
-      case "merchent":
-        return <MerchantDashboard/>;
+      case "merchant":
+        return <MerchantDashboard />;
+
       case "reports":
         return <ReportsContent />;
-      case "settings":
-        return <SettingsContent />;
+      case "subscription":
+        return <ManageSubscriptions />;
       default:
         return <DashboardContent />;
     }
@@ -162,7 +164,7 @@ export default function Dashboard() {
         position="fixed"
         sx={{
           zIndex: (theme) => theme.zIndex.drawer + 1,
-           backgroundColor: "#27586fff",
+          backgroundColor: "#27586fff",
         }}
       >
         <Toolbar>
@@ -182,7 +184,7 @@ export default function Dashboard() {
           {/* Right side - Profile and Sign Out */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <IconButton onClick={handleProfileMenuOpen} sx={{ p: 0 }}>
-              <Avatar sx={{ bgcolor:'#8AA624' }}>
+              <Avatar sx={{ bgcolor: "#8AA624" }}>
                 <PersonIcon />
               </Avatar>
             </IconButton>
