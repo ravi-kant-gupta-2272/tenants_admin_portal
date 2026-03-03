@@ -27,6 +27,7 @@ import { useNavigate } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 
 const SubscriptionDetailsPage = ({ merchantData, subscriptions }) => {
+  // console.log("=-=-=-=-=--£££ merchantData ",merchantData);
   const [showForm, setShowForm] = useState(false);
   const navigate = useNavigate();
   const handleLogout = () => {

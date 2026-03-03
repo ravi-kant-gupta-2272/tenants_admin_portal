@@ -5,9 +5,9 @@ export const registerSchema = Yup.object({
     .min(2, "Name must be at least 2 characters")
     .max(50, "Name must be less than 50 characters")
     .required("Please enter your name"),
-  email: Yup.string()
-    .email("Must be a valid email")
-    .required("Enter your Email"),
+  // email: Yup.string()
+  //   .email("Must be a valid email")
+  //   .required("Enter your Email"),
   password: Yup.string()
     .min(6, "Password must be at least 6 characters")
     .required("Please Enter your Password"),

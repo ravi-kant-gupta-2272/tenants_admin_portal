@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useFormik } from "formik";
+import { useSearchParams } from "react-router-dom";
 import { registerSchema } from "../schemas/RegisterValidationSchema";
 import TextInputField from "../components/TextInputField";
 import { IoMdPerson } from "react-icons/io";
@@ -20,6 +21,7 @@ import {
 } from "@mui/material";
 
 export default function Register() {
+  const [searchParams] = useSearchParams();
   const [apiError, setApiError] = useState("");
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
@@ -27,10 +29,10 @@ export default function Register() {
   const [severity, setSeverity] = useState("error");
   const initialValues = {
     name: "",
-    email: "",
     password: "",
     confirmPassword: "",
   };
+  const token = searchParams.get("token");
 
   const { values, handleBlur, handleChange, errors, handleSubmit, touched } =
     useFormik({
@@ -41,9 +43,20 @@ export default function Register() {
 
   async function handleRegisterFunction(values, action) {
     setLoading(true);
+    console.log("=-=-=-=-=-=-=-=");
 
     try {
-      await axios.post(`${BASE_URL}${ENDPOINTS.REGISTER}`, values);
+      await axios.post(
+        `${BASE_URL}${ENDPOINTS.REGISTER}`,
+        {
+          ...values,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
 
       setApiError("Registration Successful! Redirecting to login...");
       setSeverity("success");
@@ -239,7 +252,7 @@ export default function Register() {
             Password
           </Typography>
 
-           <TextInputField
+          <TextInputField
             fullWidth
             // label="Password"
             name="password"

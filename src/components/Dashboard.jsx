@@ -1,7 +1,7 @@
 // Dashboard.jsx - Complete Dashboard with Top Navbar and Sidebar
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { Link, Outlet } from "react-router-dom";
 import {
   Box,
   Drawer,
@@ -36,7 +36,7 @@ import ManageSubscriptions from "./dashboard_componet/ManageSubscriptions";
 const drawerWidth = 240;
 
 // Sample content components for each menu item
-const DashboardContent = () => (
+export const DashboardContent = () => (
   <Box>
     <Typography variant="h4" gutterBottom>
       Dashboard
@@ -45,7 +45,7 @@ const DashboardContent = () => (
   </Box>
 );
 
-const UsersContent = () => (
+export const UsersContent = () => (
   <Box>
     <Typography variant="h4" gutterBottom>
       Users
@@ -56,7 +56,7 @@ const UsersContent = () => (
   </Box>
 );
 
-const ReportsContent = () => (
+export const ReportsContent = () => (
   <Box>
     <Typography variant="h4" gutterBottom>
       Reports
@@ -65,7 +65,7 @@ const ReportsContent = () => (
   </Box>
 );
 
-const SettingsContent = () => (
+export const SettingsContent = () => (
   <Box>
     <Typography variant="h4" gutterBottom>
       Settings
@@ -79,17 +79,17 @@ const SettingsContent = () => (
 export default function Dashboard() {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [selectedMenu, setSelectedMenu] = useState("dashboard");
+  // const [selectedMenu, setSelectedMenu] = useState("dashboard");
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
-  const handleMenuClick = (menuItem) => {
-    setSelectedMenu(menuItem);
-    setMobileOpen(false); // Close drawer on mobile after selection
-  };
+  // const handleMenuClick = (menuItem) => {
+  //   setSelectedMenu(menuItem);
+  //   setMobileOpen(false); // Close drawer on mobile after selection
+  // };
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -108,29 +108,36 @@ export default function Dashboard() {
   };
 
   // Menu items configuration
+  // const menuItems = [
+  //   { id: "dashboard", label: "Dashboard", icon: <DashboardIcon /> },
+  //   { id: "merchant", label: "Manage Merchant", icon: <PeopleIcon /> },
+  //   { id: "subscription", label: "Subscription", icon: <AddBoxSharp /> },
+  //   { id: "reports", label: "Reports", icon: <BarChartIcon /> },
+  // ];
   const menuItems = [
-    { id: "dashboard", label: "Dashboard", icon: <DashboardIcon /> },
-    { id: "merchant", label: "Manage Merchant", icon: <PeopleIcon /> },
-    { id: "subscription", label: "Subscription", icon: <AddBoxSharp /> },
-    { id: "reports", label: "Reports", icon: <BarChartIcon /> },
+    { id: "dashboard", label: "Dashboard", path: "/home/dashboard", icon: <DashboardIcon /> },
+    { id: "merchant", label: "Manage Merchant", path: "/home/merchant", icon: <PeopleIcon /> },
+    { id: "subscription", label: "Subscription", path: "/home/subscription", icon: <AddBoxSharp /> },
+    { id: "reports", label: "Reports", path: "/home/reports", icon: <BarChartIcon /> },
   ];
 
-  // Render content based on selected menu
-  const renderContent = () => {
-    switch (selectedMenu) {
-      case "dashboard":
-        return <DashboardContent />;
-      case "merchant":
-        return <MerchantDashboard />;
 
-      case "reports":
-        return <ReportsContent />;
-      case "subscription":
-        return <ManageSubscriptions />;
-      default:
-        return <DashboardContent />;
-    }
-  };
+  // Render content based on selected menu
+  // const renderContent = () => {
+  //   switch (selectedMenu) {
+  //     case "dashboard":
+  //       return <DashboardContent />;
+  //     case "merchant":
+  //       return <MerchantDashboard />;
+
+  //     case "reports":
+  //       return <ReportsContent />;
+  //     case "subscription":
+  //       return <ManageSubscriptions />;
+  //     default:
+  //       return <DashboardContent />;
+  //   }
+  // };
 
   // Drawer content
   const drawer = (
@@ -145,8 +152,10 @@ export default function Dashboard() {
         {menuItems.map((item) => (
           <ListItem key={item.id} disablePadding>
             <ListItemButton
-              selected={selectedMenu === item.id}
-              onClick={() => handleMenuClick(item.id)}
+              component= {Link}
+              to= {item.path}
+              // selected={selectedMenu === item.id}
+              // onClick={() => handleMenuClick(item.id)}
             >
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText primary={item.label} />
@@ -272,7 +281,8 @@ export default function Dashboard() {
           mt: 8, // Space for AppBar
         }}
       >
-        {renderContent()}
+        {/* {renderContent()} */}
+        <Outlet/>
       </Box>
     </Box>
   );

@@ -48,7 +48,7 @@ function Login() {
     });
 
   if (localStorage.getItem("authToken")) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/home" replace />;
   }
 
   const handleDialogSubmit = async (email) => {
@@ -114,7 +114,7 @@ function Login() {
         localStorage.setItem("authToken", "true");
         localStorage.setItem("accessToken", response.data.accessToken);
         localStorage.setItem("refreshToken", response.data.refreshToken);
-        navigate("/dashboard", { replace: true, relative: "path" });
+        navigate("/home/dashboard", { replace: true});
       }, 2000);
     } catch (error) {
       Sentry.captureException(error);

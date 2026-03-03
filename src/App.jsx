@@ -9,6 +9,9 @@ import Login from "./pages/Login.jsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import SubscriptionDetailsPage from "./components/subscription/SubscriptionDetailsPage.jsx";
 import MerchantDashboard from "./components/dashboard_componet/MerchantDashboard.jsx";
+// import DashboardContent from "./components/Dashboard.jsx"
+import {ReportsContent, DashboardContent } from "./components/Dashboard.jsx"
+import ManageSubscriptions from "./components/dashboard_componet/ManageSubscriptions.jsx";
 // const client = new QueryClient({
 //   defaultOptions: {
 //     queries: {
@@ -40,11 +43,10 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="*" element={<Navigate to="/login" />} />
-        <Route path="/subscriptions" element={<SubscriptionDetailsPage />} />
         {/* <Route path="/merchant-dashboard" element={<MerchantDashboard />} /> */}
 
         <Route
-          path="/dashboard"
+          path="/home"
           element={
             <QueryClientProvider client={client}>
               <ProtectedRoutes>
@@ -52,7 +54,14 @@ function App() {
               </ProtectedRoutes>
             </QueryClientProvider>
           }
-        />
+        >
+          <Route index element={<DashboardContent />} />
+          <Route path="dashboard" element={<DashboardContent/>}/>
+          <Route path="merchant" element={<MerchantDashboard/>}/>
+          <Route path="reports" element={<ReportsContent/>}/>
+          <Route path="subscription" element={<ManageSubscriptions/>}/>
+          {/* <Route path="subscriptions" element={<SubscriptionDetailsPage />} /> */}
+        </Route>
       </Routes>
     </>
   );
