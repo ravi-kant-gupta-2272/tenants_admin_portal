@@ -3,6 +3,10 @@ import axiosInstance from "../api/axiosInstance";
 import { BASE_URL, ENDPOINTS } from "../api/apiConfig";
 
 export const addMerchant = (merchantDetails) => {
+  console.log(
+    "addMerchant () accessToken is",
+    localStorage.getItem("accessToken"),
+  );
   console.log("Adding merchant:", merchantDetails);
   return axios.post(`${BASE_URL}${ENDPOINTS.ADD_MERCHANT}`, merchantDetails, {
     headers: {

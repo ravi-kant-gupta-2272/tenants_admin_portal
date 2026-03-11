@@ -1,7 +1,7 @@
-// Dashboard.jsx - Complete Dashboard with Top Navbar and Sidebar
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
+
 import {
   Box,
   Drawer,
@@ -30,8 +30,6 @@ import {
   Person as PersonIcon,
   AddBoxSharp,
 } from "@mui/icons-material";
-import MerchantDashboard from "./dashboard_componet/MerchantDashboard";
-import ManageSubscriptions from "./dashboard_componet/ManageSubscriptions";
 
 const drawerWidth = 240;
 
@@ -77,6 +75,10 @@ export const SettingsContent = () => (
 );
 
 export default function Dashboard() {
+  const location = useLocation();
+  const role = location.pathname.split("/")[2];
+
+  console.log(" is------------>", role); // merchant
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   // const [selectedMenu, setSelectedMenu] = useState("dashboard");
@@ -85,11 +87,6 @@ export default function Dashboard() {
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
-
-  // const handleMenuClick = (menuItem) => {
-  //   setSelectedMenu(menuItem);
-  //   setMobileOpen(false); // Close drawer on mobile after selection
-  // };
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -103,41 +100,37 @@ export default function Dashboard() {
     handleProfileMenuClose();
     // Add your logout logic here
     localStorage.removeItem("authToken");
+    localStorage.removeItem("accessToken");
     console.log("Signing out...");
     navigate("/login");
   };
 
-  // Menu items configuration
-  // const menuItems = [
-  //   { id: "dashboard", label: "Dashboard", icon: <DashboardIcon /> },
-  //   { id: "merchant", label: "Manage Merchant", icon: <PeopleIcon /> },
-  //   { id: "subscription", label: "Subscription", icon: <AddBoxSharp /> },
-  //   { id: "reports", label: "Reports", icon: <BarChartIcon /> },
-  // ];
   const menuItems = [
-    { id: "dashboard", label: "Dashboard", path: "/home/dashboard", icon: <DashboardIcon /> },
-    { id: "merchant", label: "Manage Merchant", path: "/home/merchant", icon: <PeopleIcon /> },
-    { id: "subscription", label: "Subscription", path: "/home/subscription", icon: <AddBoxSharp /> },
-    { id: "reports", label: "Reports", path: "/home/reports", icon: <BarChartIcon /> },
+    {
+      id: "dashboard",
+      label: "Dashboard",
+      path: "/home/dashboard",
+      icon: <DashboardIcon />,
+    },
+    {
+      id: "merchant",
+      label: "Manage Merchant",
+      path: "/home/merchant",
+      icon: <PeopleIcon />,
+    },
+    {
+      id: "subscription",
+      label: "Subscription",
+      path: "/home/subscription",
+      icon: <AddBoxSharp />,
+    },
+    {
+      id: "reports",
+      label: "Reports",
+      path: "/home/reports",
+      icon: <BarChartIcon />,
+    },
   ];
-
-
-  // Render content based on selected menu
-  // const renderContent = () => {
-  //   switch (selectedMenu) {
-  //     case "dashboard":
-  //       return <DashboardContent />;
-  //     case "merchant":
-  //       return <MerchantDashboard />;
-
-  //     case "reports":
-  //       return <ReportsContent />;
-  //     case "subscription":
-  //       return <ManageSubscriptions />;
-  //     default:
-  //       return <DashboardContent />;
-  //   }
-  // };
 
   // Drawer content
   const drawer = (
@@ -152,10 +145,27 @@ export default function Dashboard() {
         {menuItems.map((item) => (
           <ListItem key={item.id} disablePadding>
             <ListItemButton
-              component= {Link}
-              to= {item.path}
-              // selected={selectedMenu === item.id}
-              // onClick={() => handleMenuClick(item.id)}
+              component={Link}
+              to={item.path}
+              selected={location.pathname.startsWith(item.path)} // ✅ highlights active
+              sx={{
+                "&.Mui-selected": {
+                  backgroundColor: "#27586f",
+                  color: "#fff",
+                  "& .MuiListItemIcon-root": {
+                    color: "#fff", // ✅ icon turns white
+                  },
+                  "&:hover": {
+                    backgroundColor: "#555d61",
+                  },
+                },
+                "&:hover": {
+                  backgroundColor: "#e8f2f5",
+                },
+                borderRadius: 1,
+                mx: 1,
+                width: "auto",
+              }}
             >
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText primary={item.label} />
@@ -169,8 +179,10 @@ export default function Dashboard() {
   return (
     <Box sx={{ display: "flex" }}>
       {/* Top AppBar */}
+
       <AppBar
         position="fixed"
+        elevation={0}
         sx={{
           zIndex: (theme) => theme.zIndex.drawer + 1,
           backgroundColor: "#27586fff",
@@ -187,7 +199,7 @@ export default function Dashboard() {
           </IconButton>
 
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            Dashboard
+            {role.toUpperCase()}
           </Typography>
 
           {/* Right side - Profile and Sign Out */}
@@ -279,10 +291,11 @@ export default function Dashboard() {
           p: 3,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           mt: 8, // Space for AppBar
+          ml: { sm: `${drawerWidth}px` },
         }}
       >
         {/* {renderContent()} */}
-        <Outlet/>
+        <Outlet />
       </Box>
     </Box>
   );

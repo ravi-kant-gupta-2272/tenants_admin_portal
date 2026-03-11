@@ -10,8 +10,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import SubscriptionDetailsPage from "./components/subscription/SubscriptionDetailsPage.jsx";
 import MerchantDashboard from "./components/dashboard_componet/MerchantDashboard.jsx";
 // import DashboardContent from "./components/Dashboard.jsx"
-import {ReportsContent, DashboardContent } from "./components/Dashboard.jsx"
+// import { ReportsContent, DashboardContent } from "./components/Dashboard.jsx";
+import DashboardContent from "./components/dashboard_componet/DashboardContent.jsx";
+import { ReportsContent } from "./components/Dashboard.jsx"; // keep only ReportsContent
 import ManageSubscriptions from "./components/dashboard_componet/ManageSubscriptions.jsx";
+import ManageSubscriptionsPlan from "./components/subscription/ManageSubscriptionsPlan.jsx";
+import SalesChart from "./components/dashboard_componet/SalesChart.jsx";
+import ReportsPage from "./components/reports/ReporsPage.jsx";
+
 // const client = new QueryClient({
 //   defaultOptions: {
 //     queries: {
@@ -42,8 +48,12 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
-        <Route path="*" element={<Navigate to="/login" />} />
-        {/* <Route path="/merchant-dashboard" element={<MerchantDashboard />} /> */}
+
+        <Route path="/merchant-dashboard" element={<MerchantDashboard />} />
+        <Route
+          path="subscription/:merchantId"
+          element={<ManageSubscriptionsPlan />}
+        />
 
         <Route
           path="/home"
@@ -56,12 +66,19 @@ function App() {
           }
         >
           <Route index element={<DashboardContent />} />
-          <Route path="dashboard" element={<DashboardContent/>}/>
-          <Route path="merchant" element={<MerchantDashboard/>}/>
-          <Route path="reports" element={<ReportsContent/>}/>
-          <Route path="subscription" element={<ManageSubscriptions/>}/>
-          {/* <Route path="subscriptions" element={<SubscriptionDetailsPage />} /> */}
+
+          <Route path="dashboard" element={<DashboardContent />} />
+          <Route path="merchant" element={<MerchantDashboard />} />
+          <Route index element={<DashboardContent />} />
+          {/* <Route path="reports" element={<ReportsContent />} /> */}
+          <Route path="reports" element={<ReportsPage />} />
+          <Route path="subscription" element={<ManageSubscriptions />} />
+          <Route
+            path="subscription/:merchantId"
+            element={<ManageSubscriptionsPlan />}
+          />
         </Route>
+        <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </>
   );

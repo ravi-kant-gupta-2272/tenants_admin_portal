@@ -13,7 +13,5 @@ export const ENDPOINTS = {
   CREATE_SUBSCRIPTION_PLAN: "/subscriptions/create",
   UPDATE_SUBSCRIPTION_PLAN: "/subscriptions/update",
   GET_SUBSCRIPTION_PLAN: "/subscriptions/get",
-  DELETE_SUBSCRIPTION_PLAN: "/api/subscriptions/delete/",
+  DELETE_SUBSCRIPTION_PLAN: "/subscriptions/delete",
 };
-
-

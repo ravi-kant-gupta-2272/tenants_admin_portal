@@ -7,7 +7,7 @@ export default function ManageSubscriptions() {
       sx={{
         // width: "10
         display: "block",
-        ml: "200px",
+        // ml: "200px",
       }}
     >
       <CollapsibleSubscriptionTable />
