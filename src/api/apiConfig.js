@@ -14,4 +14,5 @@ export const ENDPOINTS = {
   UPDATE_SUBSCRIPTION_PLAN: "/subscriptions/update",
   GET_SUBSCRIPTION_PLAN: "/subscriptions/get",
   DELETE_SUBSCRIPTION_PLAN: "/subscriptions/delete",
+  VALIDATE_TOKEN_STATUS: "/user/token-status",
 };

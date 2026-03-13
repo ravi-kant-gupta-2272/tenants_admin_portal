@@ -198,50 +198,6 @@ export default function Register() {
               {errors.name}
             </Typography>
           ) : null}
-          {/* <br></br>
-          <Typography
-            color="white"
-            variant="caption"
-            sx={{ mt: 0.5, mb: 2, textAlign: "left" }}
-          >
-            Email
-          </Typography>
-          <TextField
-            fullWidth
-            // label="Email"
-            //InputLabelProps={{ shrink: true }}
-            name="email"
-            type="email"
-            variant="outlined"
-            value={values.email}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            margin="normal"
-            disabled={loading}
-            error={touched.email && Boolean(errors.email)}
-            sx={{
-              mb: 0,
-              mt: 0.5,
-              label: { color: "#ffffff" },
-              color: "#ffffff",
-              "& .MuiOutlinedInput-root": {
-                "& fieldset": { borderColor: "#ffffff" },
-                "&:hover fieldset": { borderColor: "#ffffff" },
-                "&.Mui-focused fieldset": { borderColor: "#ffffff" },
-              },
-              "& .MuiInputLabel-root": { color: "#ffffff" },
-              "& .MuiInputBase-input": { color: "#ffffff" },
-            }}
-          />
-          {touched.email && errors.email ? (
-            <Typography
-              color="error"
-              variant="caption"
-              sx={{ mt: 0.5, mb: 2, textAlign: "left" }}
-            >
-              {errors.email}
-            </Typography>
-          ) : null} */}
 
           <br></br>
           <Typography
@@ -264,18 +220,6 @@ export default function Register() {
             onBlur={handleBlur}
             error={touched.password && Boolean(errors.password)}
           />
-          {/* <TextInputField
-            fullWidth
-            // label="Password"
-            name="password"
-            type="password"
-            margin="normal"
-            hidePassword={true}
-            value={values.password}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            error={touched.password && Boolean(errors.password)}
-          /> */}
 
           {touched.password && errors.password ? (
             <Typography
@@ -348,7 +292,5 @@ export default function Register() {
         />
       </Box>
     </Box>
-
-    //</Container>
   );
 }

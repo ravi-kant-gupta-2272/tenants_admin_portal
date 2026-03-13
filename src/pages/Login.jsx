@@ -23,7 +23,6 @@ import { BASE_URL, ENDPOINTS } from "../api/apiConfig.js";
 import CustomSnackbar from "../components/CustomSnackbar.jsx";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Navigate } from "react-router-dom";
-import ErrorButton from "../ErrorButton.jsx";
 
 const initialValues = {
   email: "",
@@ -114,7 +113,7 @@ function Login() {
         localStorage.setItem("authToken", "true");
         localStorage.setItem("accessToken", response.data.accessToken);
         localStorage.setItem("refreshToken", response.data.refreshToken);
-        navigate("/home/dashboard", { replace: true});
+        navigate("/home/dashboard", { replace: true });
       }, 2000);
     } catch (error) {
       Sentry.captureException(error);

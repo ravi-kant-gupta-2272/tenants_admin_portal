@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation, useParams } from "react-router-dom";
+import * as Sentry from "@sentry/react";
 import {
   addSubscriptionPlan,
   getAllSubscriptionPlan,
@@ -200,7 +201,8 @@ export default function TestSubscriptionPage() {
         const response = await getAllSubscriptionPlan(merchantId);
         setPlans(response.data.data || []);
       } catch (error) {
-        console.error("Failed to fetch plans:", error);
+        Sentry.captureException(error);
+        // console.error("Failed to fetch plans:", error);
         setPlans([]);
       } finally {
         setLoading(false);
@@ -268,21 +270,20 @@ export default function TestSubscriptionPage() {
           is_active: form.is_active,
         };
         const response = await addSubscriptionPlan(payload);
-        console.log("Plan created -->", response.data);
-        // ✅ append new plan from API response
+
         const newPlan = response.data.data || response.data;
         setPlans((p) => [...p, newPlan]);
       }
       handleCloseDialog();
     } catch (error) {
-      console.error("Failed to save plan:", error);
+      Sentry.captureException(error);
     }
   };
   const handleDeleteConfirm = async () => {
     try {
       await deleteSubscriptionPlan(deletingId);
 
-      // ✅ Re-fetch to sync with DB
+      //  Re-fetch to sync with DB
       const refreshed = await getAllSubscriptionPlan(merchantId);
       setPlans(refreshed.data.data || []);
 
@@ -292,11 +293,6 @@ export default function TestSubscriptionPage() {
       console.error("Failed to delete plan:", error);
     }
   };
-  // const handleToggleActive = (id) =>
-  //   setPlans((p) =>
-  //     p.map((x) => (x.id === id ? { ...x, is_active: !x.is_active } : x)),
-  //   );
-  // Replace handleToggleActive in TestSubscriptionPage.jsx
 
   const handleToggleActive = async (plan) => {
     try {
@@ -317,7 +313,7 @@ export default function TestSubscriptionPage() {
       const refreshed = await getAllSubscriptionPlan(merchantId);
       setPlans(refreshed.data.data || []);
     } catch (error) {
-      console.error("Failed to toggle plan:", error);
+      Sentry.captureException(error);
     }
   };
 

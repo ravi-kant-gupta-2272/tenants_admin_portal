@@ -7,24 +7,15 @@ import * as Sentry from "@sentry/react";
 import ProtectedRoutes from "./pages/ProtectedRoutes.jsx";
 import Login from "./pages/Login.jsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import SubscriptionDetailsPage from "./components/subscription/SubscriptionDetailsPage.jsx";
+
 import MerchantDashboard from "./components/dashboard_componet/MerchantDashboard.jsx";
-// import DashboardContent from "./components/Dashboard.jsx"
-// import { ReportsContent, DashboardContent } from "./components/Dashboard.jsx";
+
 import DashboardContent from "./components/dashboard_componet/DashboardContent.jsx";
-import { ReportsContent } from "./components/Dashboard.jsx"; // keep only ReportsContent
+
 import ManageSubscriptions from "./components/dashboard_componet/ManageSubscriptions.jsx";
 import ManageSubscriptionsPlan from "./components/subscription/ManageSubscriptionsPlan.jsx";
-import SalesChart from "./components/dashboard_componet/SalesChart.jsx";
-import ReportsPage from "./components/reports/ReporsPage.jsx";
 
-// const client = new QueryClient({
-//   defaultOptions: {
-//     queries: {
-//       staleTime: 1000 * 60 * 5,
-//     },
-//   },
-// });
+import ReportsPage from "./components/reports/ReportsPage.jsx";
 
 const client = new QueryClient({
   defaultOptions: {

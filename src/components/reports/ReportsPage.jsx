@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import * as Sentry from "@sentry/react";
 import Chart from "react-apexcharts";
 import {
   Box,
@@ -161,8 +162,8 @@ export default function ReportsPage() {
           ),
         );
         setAllPlans(planResults.flat());
-      } catch (e) {
-        console.error("Reports fetch error:", e);
+      } catch (error) {
+        Sentry.captureException(error);
       } finally {
         setLoading(false);
       }
@@ -175,10 +176,10 @@ export default function ReportsPage() {
     () => filterByDays(allPlans, dayFilter),
     [allPlans, dayFilter],
   );
-  const filteredMerchants = useMemo(
-    () => filterByDays(merchants, dayFilter),
-    [merchants, dayFilter],
-  );
+  // const filteredMerchants = useMemo(
+  //   () => filterByDays(merchants, dayFilter),
+  //   [merchants, dayFilter],
+  // );
 
   // ── Stats ─────────────────────────────────────────────────
   const totalMerchants = merchants.length;
@@ -396,7 +397,7 @@ export default function ReportsPage() {
             <Avatar sx={{ bgcolor: "#27586f", width: 44, height: 44 }}>
               <Assessment />
             </Avatar>
-            <Box>
+            <Box sx={{ pr: 100 }}>
               <Typography
                 variant="h5"
                 fontWeight={800}

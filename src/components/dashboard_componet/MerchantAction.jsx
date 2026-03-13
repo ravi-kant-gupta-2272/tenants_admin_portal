@@ -25,21 +25,17 @@ const MerchantAction = ({ merchantData }) => {
   const deleteMutation = useMutation({
     mutationFn: async (id) => {
       try {
-        console.log("before --->  ");
         const response = await deleteMerchant(id);
-        console.log("response in deleteMutation is  ", response);
+
         return response.data;
       } catch (error) {
         Sentry.captureException(error);
-        console.error("Delete API Error:", error.response?.data || error);
         throw error;
       }
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries(["merchants"]);
       setDeleteDialogOpen(false);
-
-      console.log("Merchant deleted successfully", data);
     },
     onError: (error) => {
       Sentry.captureException(error);
@@ -47,7 +43,7 @@ const MerchantAction = ({ merchantData }) => {
         error.response?.data?.message ||
         error.message ||
         "Failed to delete merchant";
-      console.error("Error deleting merchant:", errorMessage);
+      // console.error("Error deleting merchant:", errorMessage);
       setDeleteDialogOpen(false);
 
       alert(`Error: ${errorMessage}`);

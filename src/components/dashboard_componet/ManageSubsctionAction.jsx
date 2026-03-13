@@ -5,10 +5,6 @@ import { useNavigate } from "react-router-dom";
 const ManageSubsctionAction = ({ merchantData }) => {
   const navigate = useNavigate();
   const handleClick = async () => {
-
-
-    console.log("Merchant--->", merchantData);
-
     navigate(`/home/subscription/${merchantData.id}`, {
       state: {
         merchantData: merchantData,

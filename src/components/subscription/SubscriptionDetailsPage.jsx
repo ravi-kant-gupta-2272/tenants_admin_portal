@@ -21,18 +21,16 @@ import {
   Tooltip,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import SearchIcon from "@mui/icons-material/Search";
+
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
-import AddIcon from "@mui/icons-material/Add";
 
 const SubscriptionDetailsPage = ({ merchantData, subscriptions }) => {
-  // console.log("=-=-=-=-=--£££ merchantData ",merchantData);
   const [showForm, setShowForm] = useState(false);
   const navigate = useNavigate();
   const handleLogout = () => {
     localStorage.removeItem("authToken");
-    console.log("Signing out...");
+
     navigate("/login");
   };
 
@@ -88,12 +86,6 @@ const SubscriptionDetailsPage = ({ merchantData, subscriptions }) => {
 
           {/* 🔹 RIGHT SECTION */}
           <Box>
-            {/* <Tooltip title="Search">
-              <IconButton sx={{ color: "white" }}>
-                <SearchIcon />
-              </IconButton>
-            </Tooltip> */}
-
             <Tooltip title="Logout">
               <IconButton onClick={handleLogout} sx={{ color: "white" }}>
                 <LogoutIcon />
@@ -104,12 +96,7 @@ const SubscriptionDetailsPage = ({ merchantData, subscriptions }) => {
       </AppBar>
 
       <Box sx={{ p: 4, maxWidth: 1100, margin: "auto" }}>
-        {/* 🔹 PAGE TITLE */}
-        {/* <Typography variant="h5" fontWeight={600} mb={3}>
-          Manage Your Subscription
-        </Typography> */}
-
-        {/* 🔹 MERCHANT INFO CARD */}
+        {/*  MERCHANT INFO CARD */}
 
         <Card
           sx={{

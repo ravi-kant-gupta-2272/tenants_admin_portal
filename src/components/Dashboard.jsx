@@ -199,7 +199,7 @@ export default function Dashboard() {
           </IconButton>
 
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            {role.toUpperCase()}
+            {role?.toUpperCase() ?? "Dashboard"}
           </Typography>
 
           {/* Right side - Profile and Sign Out */}

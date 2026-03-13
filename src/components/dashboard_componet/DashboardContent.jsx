@@ -17,8 +17,9 @@ import {
   CheckCircle,
   Cancel,
 } from "@mui/icons-material";
-//import { getAllMerchants } from "../../services/merchant.services";
-import { getAllMerchants } from "../../services/dashboard.service";
+// import { getAllMerchants } from "../../services/dashboard.service";
+
+import { getAllMerchants } from "../../services/merchant.service";
 import { getAllSubscriptionPlan } from "../../services/subscription.services";
 
 export default function DashboardContent() {
@@ -35,6 +36,7 @@ export default function DashboardContent() {
         const merchantRes = await getAllMerchants(100, 0);
         const merchantList = merchantRes.data.data || [];
         setMerchants(merchantList);
+        console.log("merchantList--->", merchantList);
 
         // ✅ Fetch plans for ALL merchants in parallel
         const planPromises = merchantList.map(
