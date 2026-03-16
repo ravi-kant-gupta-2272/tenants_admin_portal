@@ -48,7 +48,6 @@ import {
   Badge as BadgeIcon,
 } from "@mui/icons-material";
 
-// ─── Constants ────────────────────────────────────────────────
 const PLAN_TYPES = ["TRIAL", "MONTHLY", "QUARTERLY", "YEARLY"];
 
 const PLAN_COLORS = {
@@ -67,7 +66,6 @@ const emptyForm = {
   is_active: true,
 };
 
-// ─── Staggered Fade-In ────────────────────────────────────────
 const FadeIn = ({ children, delay = 0 }) => {
   const [visible, setVisible] = useState(false);
   useEffect(() => {
@@ -81,7 +79,6 @@ const FadeIn = ({ children, delay = 0 }) => {
   );
 };
 
-// ─── Copy Button ──────────────────────────────────────────────
 const CopyButton = ({ value }) => {
   const [copied, setCopied] = useState(false);
   const handleCopy = () => {
@@ -106,13 +103,12 @@ const CopyButton = ({ value }) => {
   );
 };
 
-// ─── Info Row — fully left-aligned label + value ──────────────
 const InfoRow = ({ label, value, copyable, truncate }) => (
   <Box sx={{ mb: 1.8, textAlign: "left" }}>
     <Typography
       variant="caption"
       sx={{
-        display: "block", // ← forces label to its own line
+        display: "block",
         color: "#90a4ae",
         fontWeight: 700,
         letterSpacing: 0.7,
@@ -141,7 +137,6 @@ const InfoRow = ({ label, value, copyable, truncate }) => (
   </Box>
 );
 
-// ─── Card shared style ────────────────────────────────────────
 const cardSx = {
   borderRadius: 3,
   height: "100%",
@@ -154,7 +149,6 @@ const cardSx = {
   },
 };
 
-// ─── Card Section Header ──────────────────────────────────────
 const CardHeader = ({ icon, label, color, borderColor }) => (
   <Box
     display="flex"
@@ -178,14 +172,12 @@ const CardHeader = ({ icon, label, color, borderColor }) => (
   </Box>
 );
 
-// ─── Main Component ───────────────────────────────────────────
 export default function TestSubscriptionPage() {
   const { merchantId } = useParams();
   const location = useLocation();
   const merchantData = location.state?.merchantData || {};
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const [dialogOpen, setDialogOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -193,7 +185,9 @@ export default function TestSubscriptionPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
 
-  // ✅ Fetch plans on mount
+  // ✅ Only TRIAL gets duration & billing cycle
+  const isTrial = form.plan_type === "TRIAL";
+
   useEffect(() => {
     const fetchPlans = async () => {
       try {
@@ -202,7 +196,6 @@ export default function TestSubscriptionPage() {
         setPlans(response.data.data || []);
       } catch (error) {
         Sentry.captureException(error);
-        // console.error("Failed to fetch plans:", error);
         setPlans([]);
       } finally {
         setLoading(false);
@@ -211,7 +204,6 @@ export default function TestSubscriptionPage() {
     if (merchantId) fetchPlans();
   }, [merchantId]);
 
-  // Handlers
   const handleOpenAdd = () => {
     setForm(emptyForm);
     setIsEditing(false);
@@ -234,17 +226,41 @@ export default function TestSubscriptionPage() {
     setDialogOpen(false);
     setForm(emptyForm);
   };
+
   const handleFormChange = (e) => {
     const { name, value, type, checked } = e.target;
+
+    // ✅ When switching plan type away from TRIAL, clear duration & billing
+    if (name === "plan_type") {
+      setForm((p) => ({
+        ...p,
+        plan_type: value,
+        duration_days: value !== "TRIAL" ? "" : p.duration_days,
+        billing_cycle_months: value !== "TRIAL" ? 0 : p.billing_cycle_months,
+      }));
+      return;
+    }
+
+    // ✅ Block duration_days outside 1–15 for TRIAL
+    if (name === "duration_days") {
+      const num = Number(value);
+      if (value !== "" && (num < 1 || num > 15)) return;
+    }
+
+    // ✅ Block billing_cycle_months outside 1–28 for TRIAL
+    if (name === "billing_cycle_months") {
+      const num = Number(value);
+      if (value !== "" && (num < 1 || num > 28)) return;
+    }
+
     setForm((p) => ({ ...p, [name]: type === "checkbox" ? checked : value }));
   };
 
-  // ✅ handleSubmit wired to addSubscriptionPlan API
   const handleSubmit = async () => {
     try {
       if (isEditing) {
-        const payload = {
-          subscription_id: editingId, // ← the plan's DB id
+        await updateSubscriptionPlan({
+          subscription_id: editingId,
           merchant_id: Number(merchantId),
           plan_name: form.plan_name,
           plan_type: form.plan_type,
@@ -252,15 +268,11 @@ export default function TestSubscriptionPage() {
           duration_days: Number(form.duration_days),
           billing_cycle_months: Number(form.billing_cycle_months),
           is_active: form.is_active,
-        };
-
-        await updateSubscriptionPlan(payload);
-
-        // Re-fetch to sync with DB
+        });
         const refreshed = await getAllSubscriptionPlan(merchantId);
         setPlans(refreshed.data.data || []);
       } else {
-        const payload = {
+        const response = await addSubscriptionPlan({
           merchant_id: Number(merchantId),
           plan_name: form.plan_name,
           plan_type: form.plan_type,
@@ -268,9 +280,7 @@ export default function TestSubscriptionPage() {
           duration_days: Number(form.duration_days),
           billing_cycle_months: Number(form.billing_cycle_months),
           is_active: form.is_active,
-        };
-        const response = await addSubscriptionPlan(payload);
-
+        });
         const newPlan = response.data.data || response.data;
         setPlans((p) => [...p, newPlan]);
       }
@@ -279,14 +289,12 @@ export default function TestSubscriptionPage() {
       Sentry.captureException(error);
     }
   };
+
   const handleDeleteConfirm = async () => {
     try {
       await deleteSubscriptionPlan(deletingId);
-
-      //  Re-fetch to sync with DB
       const refreshed = await getAllSubscriptionPlan(merchantId);
       setPlans(refreshed.data.data || []);
-
       setDeleteDialogOpen(false);
       setDeletingId(null);
     } catch (error) {
@@ -296,7 +304,7 @@ export default function TestSubscriptionPage() {
 
   const handleToggleActive = async (plan) => {
     try {
-      const payload = {
+      await updateSubscriptionPlan({
         subscription_id: plan.id,
         merchant_id: Number(merchantId),
         plan_name: plan.plan_name,
@@ -304,12 +312,8 @@ export default function TestSubscriptionPage() {
         amount: Number(plan.amount),
         duration_days: Number(plan.duration_days),
         billing_cycle_months: Number(plan.billing_cycle_months),
-        is_active: !plan.is_active, // ✅ flip the value
-      };
-
-      await updateSubscriptionPlan(payload);
-
-      // ✅ Re-fetch to sync with DB
+        is_active: !plan.is_active,
+      });
       const refreshed = await getAllSubscriptionPlan(merchantId);
       setPlans(refreshed.data.data || []);
     } catch (error) {
@@ -331,13 +335,12 @@ export default function TestSubscriptionPage() {
       sx={{
         p: { xs: 2, md: 3 },
         minHeight: "100vh",
-        // Option 1 — dot grid background
         background: "#f4f6f9",
         backgroundImage: "radial-gradient(#c9d8e3 1px, transparent 1px)",
         backgroundSize: "24px 24px",
       }}
     >
-      {/* ── Page Header ────────────────────────────────── */}
+      {/* ── Page Header ── */}
       <FadeIn delay={0}>
         <Box
           display="flex"
@@ -394,9 +397,8 @@ export default function TestSubscriptionPage() {
         </Box>
       </FadeIn>
 
-      {/* ── 3 Category Cards ─────────────────────────────── */}
+      {/* ── 3 Category Cards ── */}
       <Grid container spacing={2.5} mb={4}>
-        {/* Card 1 — Basic Info */}
         <Grid item xs={12} md={4}>
           <FadeIn delay={100}>
             <Card sx={cardSx}>
@@ -417,7 +419,6 @@ export default function TestSubscriptionPage() {
                   label="Client Version"
                   value={String(merchantData.client_version || "")}
                 />
-                {/* Environment — left-aligned label + chip below */}
                 <Box sx={{ textAlign: "left", mt: 0.5 }}>
                   <Typography
                     variant="caption"
@@ -457,7 +458,6 @@ export default function TestSubscriptionPage() {
           </FadeIn>
         </Grid>
 
-        {/* Card 2 — Security Credentials */}
         <Grid item xs={12} md={4}>
           <FadeIn delay={200}>
             <Card
@@ -513,7 +513,6 @@ export default function TestSubscriptionPage() {
           </FadeIn>
         </Grid>
 
-        {/* Card 3 — Integration & Dates */}
         <Grid item xs={12} md={4}>
           <FadeIn delay={300}>
             <Card
@@ -560,7 +559,7 @@ export default function TestSubscriptionPage() {
                       fontSize="0.81rem"
                       color="#37474f"
                     >
-                      {fmt(merchantData.created_at)}
+                      {fmt(merchantData.createdAt)}
                     </Typography>
                   </Grid>
                   <Grid item xs={6} sx={{ textAlign: "left" }}>
@@ -584,7 +583,7 @@ export default function TestSubscriptionPage() {
                       fontSize="0.81rem"
                       color="#37474f"
                     >
-                      {fmt(merchantData.updated_at)}
+                      {fmt(merchantData.updatedAt)}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -594,9 +593,8 @@ export default function TestSubscriptionPage() {
         </Grid>
       </Grid>
 
-      {/* ── Subscription Plans ────────────────────────────── */}
+      {/* ── Subscription Plans ── */}
       <FadeIn delay={380}>
-        {/* Section header */}
         <Box
           display="flex"
           justifyContent="space-between"
@@ -634,7 +632,6 @@ export default function TestSubscriptionPage() {
           </Button>
         </Box>
 
-        {/* Table */}
         <TableContainer
           component={Paper}
           sx={{
@@ -780,7 +777,6 @@ export default function TestSubscriptionPage() {
                           >
                             <Switch
                               checked={plan.is_active}
-                              // onChange={() => handleToggleActive(plan.id)}
                               onChange={() => handleToggleActive(plan)}
                               color="success"
                               size="small"
@@ -809,8 +805,6 @@ export default function TestSubscriptionPage() {
                       >
                         {fmt(plan.created_at)}
                       </TableCell>
-
-                      {/* ── Horizontal Actions ── */}
                       <TableCell>
                         <Stack
                           direction="row"
@@ -871,7 +865,7 @@ export default function TestSubscriptionPage() {
         </TableContainer>
       </FadeIn>
 
-      {/* ── Add / Edit Dialog ─────────────────────────────── */}
+      {/* ── Add / Edit Dialog ── */}
       <Dialog
         open={dialogOpen}
         onClose={handleCloseDialog}
@@ -901,6 +895,7 @@ export default function TestSubscriptionPage() {
               required
               size="small"
             />
+
             <TextField
               label="Plan Type"
               name="plan_type"
@@ -917,6 +912,7 @@ export default function TestSubscriptionPage() {
                 </MenuItem>
               ))}
             </TextField>
+
             <Grid container spacing={2}>
               <Grid item xs={6}>
                 <TextField
@@ -930,28 +926,88 @@ export default function TestSubscriptionPage() {
                   size="small"
                 />
               </Grid>
+
+              {/* ✅ Duration — enabled ONLY for TRIAL, range 1–15 */}
               <Grid item xs={6}>
+                <Tooltip
+                  title={
+                    !isTrial
+                      ? "Only available for TRIAL plan type"
+                      : "Enter between 1–15 days"
+                  }
+                  arrow
+                >
+                  <span>
+                    <TextField
+                      label="Duration (days)"
+                      name="duration_days"
+                      value={isTrial ? form.duration_days : ""}
+                      onChange={handleFormChange}
+                      type="number"
+                      fullWidth
+                      required={isTrial}
+                      size="small"
+                      disabled={!isTrial}
+                      slotProps={{ min: 1, max: 15 }}
+                      helperText={
+                        isTrial ? "Range: 1–15 days" : "Only for TRIAL"
+                      }
+                      sx={{
+                        "& .MuiInputBase-root.Mui-disabled": {
+                          bgcolor: "#f5f5f5",
+                        },
+                        "& .MuiFormHelperText-root": {
+                          color: isTrial ? "#27586f" : "#bdbdbd",
+                          fontSize: "0.65rem",
+                        },
+                      }}
+                    />
+                  </span>
+                </Tooltip>
+              </Grid>
+            </Grid>
+
+            {/* ✅ Billing Cycle — enabled ONLY for TRIAL, range 1–28 */}
+            <Tooltip
+              title={
+                isTrial
+                  ? "Only available for SUBSCRIPTION plan type"
+                  : "Enter between 1–28 months"
+              }
+              arrow
+            >
+              <span>
                 <TextField
-                  label="Duration (days)"
-                  name="duration_days"
-                  value={form.duration_days}
+                  label="Billing Cycle (months)"
+                  name="billing_cycle_months"
+                  value={isTrial ? form.billing_cycle_months : ""}
                   onChange={handleFormChange}
                   type="number"
                   fullWidth
-                  required
                   size="small"
+                  disabled={isTrial}
+                  slotProps={{
+                    input: {
+                      inputProps: {
+                        min: 1,
+                        max: 28,
+                      },
+                    },
+                  }}
+                  helperText={
+                    !isTrial ? "Range: 1–28 months" : "Only for SUBSCRIPTION"
+                  }
+                  sx={{
+                    "& .MuiInputBase-root.Mui-disabled": { bgcolor: "#f5f5f5" },
+                    "& .MuiFormHelperText-root": {
+                      color: isTrial ? "#27586f" : "#bdbdbd",
+                      fontSize: "0.65rem",
+                    },
+                  }}
                 />
-              </Grid>
-            </Grid>
-            <TextField
-              label="Billing Cycle (months)"
-              name="billing_cycle_months"
-              value={form.billing_cycle_months}
-              onChange={handleFormChange}
-              type="number"
-              fullWidth
-              size="small"
-            />
+              </span>
+            </Tooltip>
+
             <Box
               display="flex"
               alignItems="center"
@@ -1007,7 +1063,7 @@ export default function TestSubscriptionPage() {
         </DialogActions>
       </Dialog>
 
-      {/* ── Delete Confirm Dialog ─────────────────────────── */}
+      {/* ── Delete Confirm Dialog ── */}
       <Dialog
         open={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}

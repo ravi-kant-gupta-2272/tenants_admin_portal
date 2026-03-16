@@ -69,6 +69,7 @@ function Login() {
       setOpen(true);
       setOpenDialog(false);
     } catch (error) {
+      console.log("Registration Link ", error);
       setSeverity("error");
       const errorMessage =
         dialogMode === "reset"
