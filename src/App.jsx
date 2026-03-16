@@ -1,19 +1,78 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
-import Login from './pages/Login.jsx'
-import Register from './pages/Register.jsx'
-import './App.css'
+import { Routes, Route, Navigate } from "react-router-dom";
+import Register from "./pages/Register.jsx";
+import "./App.css";
+import Dashboard from "./components/Dashboard.jsx";
+import ForgotPassword from "./pages/ForgotPassword.jsx";
+import * as Sentry from "@sentry/react";
+import ProtectedRoutes from "./pages/ProtectedRoutes.jsx";
+import Login from "./pages/Login.jsx";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+import MerchantDashboard from "./components/dashboard_componet/MerchantDashboard.jsx";
+
+import DashboardContent from "./components/dashboard_componet/DashboardContent.jsx";
+
+import ManageSubscriptions from "./components/dashboard_componet/ManageSubscriptions.jsx";
+import ManageSubscriptionsPlan from "./components/subscription/ManageSubscriptionsPlan.jsx";
+
+import ReportsPage from "./components/reports/ReportsPage.jsx";
+
+const client = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5,
+      onError: (error) => {
+        Sentry.captureException(error);
+      },
+    },
+    mutations: {
+      onError: (error) => {
+        Sentry.captureException(error);
+      },
+    },
+  },
+});
 function App() {
-
   return (
     <>
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="/forgotpassword" element={<ForgotPassword />} />
+
+        <Route path="/merchant-dashboard" element={<MerchantDashboard />} />
+        <Route
+          path="subscription/:merchantId"
+          element={<ManageSubscriptionsPlan />}
+        />
+
+        <Route
+          path="/home"
+          element={
+            <QueryClientProvider client={client}>
+              <ProtectedRoutes>
+                <Dashboard />
+              </ProtectedRoutes>
+            </QueryClientProvider>
+          }
+        >
+          <Route index element={<DashboardContent />} />
+
+          <Route path="dashboard" element={<DashboardContent />} />
+          <Route path="merchant" element={<MerchantDashboard />} />
+          <Route index element={<DashboardContent />} />
+          {/* <Route path="reports" element={<ReportsContent />} /> */}
+          <Route path="reports" element={<ReportsPage />} />
+          <Route path="subscription" element={<ManageSubscriptions />} />
+          <Route
+            path="subscription/:merchantId"
+            element={<ManageSubscriptionsPlan />}
+          />
+        </Route>
+        <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
